@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+
+<meta charset="UTF-8">
+<meta name="viewport"
+      content="width=device-width, initial-scale=1.0">
+
+<title>Statistics - TypingMaster</title>
+
+<link rel="stylesheet" href="css/style.css">
+
+</head>
+
+<body>
+
+<div id="app"></div>
+
+<main class="main-content">
+
+    <div class="page-header">
+
+        <h1>📊 Statistics</h1>
+
+        <p>
+            Track your typing performance.
+        </p>
+
+    </div>
+
+
+    <section class="stats-grid">
+
+        <div class="stat-card">
+            <div class="stat-icon blue">⚡</div>
+
+            <div>
+                <strong id="bestWpm">0</strong>
+                <span>Best WPM</span>
+            </div>
+        </div>
+
+
+        <div class="stat-card">
+            <div class="stat-icon green">🎯</div>
+
+            <div>
+                <strong id="bestAccuracy">0%</strong>
+                <span>Best Accuracy</span>
+            </div>
+        </div>
+
+
+        <div class="stat-card">
+            <div class="stat-icon purple">⌨️</div>
+
+            <div>
+                <strong id="totalTests">0</strong>
+                <span>Tests Completed</span>
+            </div>
+        </div>
+
+
+        <div class="stat-card">
+            <div class="stat-icon orange">📝</div>
+
+            <div>
+                <strong id="totalWords">0</strong>
+                <span>Words Typed</span>
+            </div>
+        </div>
+
+    </section>
+
+
+    <section class="statistics-panels">
+
+        <div class="info-panel">
+
+            <h2>🎮 Game Records</h2>
+
+            <div class="record-row">
+                <span>Falling Words</span>
+                <strong id="fallingBest">0</strong>
+            </div>
+
+            <div class="record-row">
+                <span>Word Rush</span>
+                <strong id="rushBest">0</strong>
+            </div>
+
+        </div>
+
+
+        <div class="info-panel">
+
+            <h2>📈 Overall Progress</h2>
+
+            <div class="record-row">
+                <span>Average WPM</span>
+                <strong id="averageWpm">0</strong>
+            </div>
+
+            <div class="record-row">
+                <span>Characters Typed</span>
+                <strong id="totalCharacters">0</strong>
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <section class="danger-panel">
+
+        <h2>Reset Statistics</h2>
+
+        <p>
+            This will permanently remove your locally
+            stored TypingMaster statistics.
+        </p>
+
+        <button id="clearStats"
+                class="btn btn-danger">
+
+            Reset All Statistics
+
+        </button>
+
+    </section>
+
+</main>
+
+<script src="js/common.js"></script>
+<script src="js/statistics.js"></script>
+
+</body>
+</html>

@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TypingMaster - Home</title>
+<link rel="stylesheet" href="css/style.css">
+</head>
+
+<body>
+
+<div id="app"></div>
+
+<main class="main-content">
+
+    <div class="hero">
+        <h1>Master Your Typing Skills</h1>
+        <p>
+            Practice typing, test your speed, play typing games
+            and track your progress.
+        </p>
+
+        <div class="hero-buttons">
+            <a href="typing-test.html" class="btn">Start Typing Test</a>
+            <a href="practice.html" class="btn btn-outline">Practice Now</a>
+        </div>
+    </div>
+
+    <section class="stats-grid">
+
+        <div class="stat-card">
+            <div class="stat-icon blue">⚡</div>
+            <div>
+                <strong id="homeWpm">0</strong>
+                <span>Best WPM</span>
+            </div>
+        </div>
+
+        <div class="stat-card">
+            <div class="stat-icon green">🎯</div>
+            <div>
+                <strong id="homeAccuracy">0%</strong>
+                <span>Best Accuracy</span>
+            </div>
+        </div>
+
+        <div class="stat-card">
+            <div class="stat-icon purple">⌨️</div>
+            <div>
+                <strong id="homeTests">0</strong>
+                <span>Tests Completed</span>
+            </div>
+        </div>
+
+        <div class="stat-card">
+            <div class="stat-icon orange">📝</div>
+            <div>
+                <strong id="homeWords">0</strong>
+                <span>Words Typed</span>
+            </div>
+        </div>
+
+    </section>
+
+    <h2 class="section-title">Typing Tools</h2>
+
+    <section class="tool-grid">
+
+        <a href="typing-test.html" class="tool-card">
+            <div class="tool-large-icon">⌨️</div>
+            <h3>Typing Test</h3>
+            <p>
+                Measure your typing speed, accuracy,
+                errors and characters per minute.
+            </p>
+            <span class="card-link">Start Test →</span>
+        </a>
+
+        <a href="practice.html" class="tool-card">
+            <div class="tool-large-icon">📝</div>
+            <h3>Typing Practice</h3>
+            <p>
+                Practice with generated passages or
+                paste your own text.
+            </p>
+            <span class="card-link">Practice →</span>
+        </a>
+
+        <a href="games.html" class="tool-card">
+            <div class="tool-large-icon">🎮</div>
+            <h3>Typing Games</h3>
+            <p>
+                Improve your speed and reflexes
+                while having fun.
+            </p>
+            <span class="card-link">Play Games →</span>
+        </a>
+
+        <a href="statistics.html" class="tool-card">
+            <div class="tool-large-icon">📊</div>
+            <h3>Statistics</h3>
+            <p>
+                View your personal records and
+                typing progress.
+            </p>
+            <span class="card-link">View Statistics →</span>
+        </a>
+
+    </section>
+
+    <section class="info-panel">
+        <h2>How to improve your typing</h2>
+
+        <div class="tips-grid">
+            <div>
+                <b>01. Accuracy First</b>
+                <p>Focus on typing correctly before trying to type faster.</p>
+            </div>
+
+            <div>
+                <b>02. Practice Daily</b>
+                <p>Even 10 minutes of daily practice can make a difference.</p>
+            </div>
+
+            <div>
+                <b>03. Don't Look Down</b>
+                <p>Try to keep your eyes on the screen instead of the keyboard.</p>
+            </div>
+
+            <div>
+                <b>04. Keep Your Rhythm</b>
+                <p>Use a consistent typing rhythm instead of rushing.</p>
+            </div>
+        </div>
+    </section>
+
+</main>
+
+<script src="js/common.js"></script>
+
+<script>
+document.addEventListener("DOMContentLoaded", updateDashboard);
+</script>
+
+</body>
+</html>

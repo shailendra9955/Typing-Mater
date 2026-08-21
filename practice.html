@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Typing Practice - TypingMaster</title>
+
+<link rel="stylesheet" href="css/style.css">
+
+</head>
+
+<body>
+
+<div id="app"></div>
+
+<main class="main-content">
+
+    <div class="page-header">
+        <h1>📝 Typing Practice</h1>
+        <p>Practice with passages or use your own text.</p>
+    </div>
+
+    <div class="practice-tabs">
+
+        <button id="generatedTab" class="active">
+            Generated Passage
+        </button>
+
+        <button id="customTab">
+            My Own Text
+        </button>
+
+    </div>
+
+
+    <section id="generatedPractice" class="practice-panel">
+
+        <div class="test-controls">
+
+            <div>
+                <label>Difficulty</label>
+
+                <select id="practiceDifficulty">
+                    <option value="beginner">🟢 Beginner</option>
+                    <option value="intermediate" selected>🟡 
+                        Intermediate
+                    </option>
+                    <option value="advanced">🔴 Advanced</option>
+                </select>
+            </div>
+
+            <button id="practiceNew" class="btn">
+                New Passage
+            </button>
+
+        </div>
+
+        <div class="typing-container">
+
+            <div id="practicePassage"
+                 class="typing-passage"></div>
+
+            <textarea
+                id="practiceInput"
+                placeholder="Start practicing..."
+                spellcheck="false"></textarea>
+
+            <div class="progress">
+                <div id="practiceProgress"></div>
+            </div>
+
+            <div id="practiceStats"
+                 class="practice-stats">
+
+                WPM: 0 |
+                Accuracy: 100% |
+                Errors: 0
+
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <section id="customPractice"
+             class="practice-panel hidden">
+
+        <div class="custom-editor">
+
+            <h2>Your Text</h2>
+
+            <textarea
+                id="customText"
+                placeholder="Paste or type your practice text here..."></textarea>
+
+            <button id="startCustom"
+                    class="btn">
+
+                Start Practice
+
+            </button>
+
+        </div>
+
+        <div id="customArea"
+             class="typing-container hidden">
+
+            <div id="customPassage"
+                 class="typing-passage"></div>
+
+            <textarea
+                id="customInput"
+                placeholder="Start typing..."
+                spellcheck="false"></textarea>
+
+            <div class="progress">
+                <div id="customProgress"></div>
+            </div>
+
+            <div id="customStats"
+                 class="practice-stats">
+
+                WPM: 0 |
+                Accuracy: 100% |
+                Errors: 0
+
+            </div>
+
+        </div>
+
+    </section>
+
+</main>
+
+<script src="js/common.js"></script>
+<script src="js/practice.js"></script>
+
+</body>
+</html>

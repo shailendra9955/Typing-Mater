@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Typing Test - TypingMaster</title>
+
+<link rel="stylesheet" href="css/style.css">
+</head>
+
+<body>
+
+<div id="app"></div>
+
+<main class="main-content">
+
+    <div class="page-header">
+        <h1>⌨️ Typing Speed Test</h1>
+        <p>Test your typing speed and accuracy.</p>
+    </div>
+
+    <div class="test-controls">
+
+        <div>
+            <label>Difficulty</label>
+
+            <select id="difficulty">
+                <option value="beginner">🟢 Beginner</option>
+                <option value="intermediate" selected>🟡 Intermediate</option>
+                <option value="advanced">🔴 Advanced</option>
+            </select>
+        </div>
+
+        <div>
+            <label>Duration</label>
+
+            <select id="duration">
+                <option value="30">30 Seconds</option>
+                <option value="60" selected>60 Seconds</option>
+                <option value="120">120 Seconds</option>
+                <option value="0">Unlimited</option>
+            </select>
+        </div>
+
+        <button id="newPassage" class="btn">
+            New Passage
+        </button>
+
+        <button id="restartTest" class="btn btn-secondary">
+            Restart
+        </button>
+
+    </div>
+
+    <div class="test-stats">
+
+        <div>
+            <span>WPM</span>
+            <strong id="wpm">0</strong>
+        </div>
+
+        <div>
+            <span>Accuracy</span>
+            <strong id="accuracy">100%</strong>
+        </div>
+
+        <div>
+            <span>Time</span>
+            <strong id="timer">60</strong>
+        </div>
+
+        <div>
+            <span>Errors</span>
+            <strong id="errors">0</strong>
+        </div>
+
+    </div>
+
+    <div class="typing-container">
+
+        <div id="passage" class="typing-passage"></div>
+
+        <textarea
+            id="typingInput"
+            placeholder="Start typing here..."
+            spellcheck="false"
+            autocomplete="off"
+            autocorrect="off"
+            autocapitalize="off"></textarea>
+
+        <div class="progress">
+            <div id="progressBar"></div>
+        </div>
+
+        <p id="testMessage" class="muted center">
+            Start typing to begin the test.
+        </p>
+
+    </div>
+
+    <div id="resultBox" class="result-box hidden">
+
+        <div class="result-title">
+            🎉 Test Complete!
+        </div>
+
+        <div class="result-grid">
+
+            <div>
+                <span>WPM</span>
+                <strong id="finalWpm">0</strong>
+            </div>
+
+            <div>
+                <span>Accuracy</span>
+                <strong id="finalAccuracy">0%</strong>
+            </div>
+
+            <div>
+                <span>Errors</span>
+                <strong id="finalErrors">0</strong>
+            </div>
+
+            <div>
+                <span>Characters</span>
+                <strong id="finalCharacters">0</strong>
+            </div>
+
+        </div>
+
+        <button id="tryAgain" class="btn">
+            New Passage
+        </button>
+
+    </div>
+
+</main>
+
+<script src="js/common.js"></script>
+<script src="js/typing-test.js"></script>
+
+</body>
+</html>
