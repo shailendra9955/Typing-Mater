@@ -1,0 +1,3857 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+<meta charset="UTF-8">
+
+<meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0">
+
+<meta
+    name="description"
+    content="Target Typing game">
+
+<meta
+    name="referrer"
+    content="no-referrer">
+
+<title>Target Typing - Typing Master</title>
+
+<link
+    rel="stylesheet"
+    href="../css/style.css">
+
+
+<style>
+
+/* =====================================================
+   TARGET TYPING
+   Game-specific CSS only.
+   Sidebar / global CSS is not modified.
+===================================================== */
+
+
+/* =====================================================
+   TARGET AREA
+===================================================== */
+
+.target-area {
+
+    position: relative;
+
+    width: 100%;
+
+    height: 320px;
+
+    margin-bottom: 20px;
+
+    border-radius: 18px;
+
+    overflow: hidden;
+
+    background:
+        linear-gradient(
+            135deg,
+            rgba(99, 102, 241, 0.12),
+            rgba(14, 165, 233, 0.10)
+        );
+
+    border:
+        2px solid
+        rgba(99, 102, 241, 0.35);
+
+    box-shadow:
+        inset 0 0 30px
+        rgba(99, 102, 241, 0.08),
+
+        0 8px 25px
+        rgba(0, 0, 0, 0.08);
+
+    isolation: isolate;
+
+}
+
+
+/* =====================================================
+   BACKGROUND GRID
+===================================================== */
+
+.target-area::before {
+
+    content: "";
+
+    position: absolute;
+
+    inset: 0;
+
+    background-image:
+
+        linear-gradient(
+            rgba(99, 102, 241, 0.07) 1px,
+            transparent 1px
+        ),
+
+        linear-gradient(
+            90deg,
+            rgba(99, 102, 241, 0.07) 1px,
+            transparent 1px
+        );
+
+    background-size: 25px 25px;
+
+    pointer-events: none;
+
+    z-index: 0;
+
+}
+
+
+/* =====================================================
+   TARGET
+===================================================== */
+
+/* =====================================================
+   RECTANGULAR TYPING TARGET
+===================================================== */
+
+.typing-target {
+    position: absolute;
+
+    min-width: 150px;
+    max-width: calc(100% - 20px);
+
+    min-height: 70px;
+    max-height: 110px;
+
+    padding: 18px 28px;
+
+    box-sizing: border-box;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    text-align: center;
+
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+
+    font-size: 20px;
+    line-height: 1;
+
+    font-weight: 800;
+    letter-spacing: 0.4px;
+
+    color: #ffffff;
+
+    background:
+        linear-gradient(
+            135deg,
+            #6366f1,
+            #4f46e5
+        );
+
+    border: 3px solid rgba(255,255,255,0.95);
+
+    border-radius: 14px;
+
+    box-shadow:
+        0 0 0 4px rgba(99,102,241,0.16),
+        0 10px 25px rgba(49,46,129,0.30),
+        inset 0 2px 5px rgba(255,255,255,0.25);
+
+    z-index: 2;
+
+    user-select: none;
+
+    transition:
+        left 0.18s ease,
+        top 0.18s ease,
+        transform 0.15s ease,
+        opacity 0.15s ease;
+}
+
+
+/* Target shine */
+
+.typing-target::before {
+    content: "";
+
+    position: absolute;
+
+    width: 45px;
+    height: 12px;
+
+    top: 10px;
+    left: 20px;
+
+    border-radius: 50%;
+
+    background:
+        rgba(255,255,255,0.18);
+
+    transform: rotate(-15deg);
+
+    pointer-events: none;
+}
+
+
+/* Active target */
+
+.typing-target.active {
+    animation: targetPulse 1.5s ease-in-out infinite;
+}
+
+
+/* Correct */
+
+.typing-target.target-success {
+    animation: targetSuccess 0.35s ease-in-out;
+}
+
+
+/* Wrong */
+
+.typing-target.target-error {
+    animation: targetError 0.3s ease-in-out;
+}
+
+
+/* Disappear */
+
+.typing-target.target-disappear {
+    animation: targetDisappear 0.25s ease-out forwards;
+}
+
+
+/* =====================================================
+   ANIMATIONS
+===================================================== */
+
+@keyframes targetPulse {
+    0%, 100% {
+        box-shadow:
+            0 0 0 4px rgba(99,102,241,0.16),
+            0 10px 25px rgba(49,46,129,0.30),
+            inset 0 2px 5px rgba(255,255,255,0.25);
+    }
+
+    50% {
+        box-shadow:
+            0 0 0 8px rgba(99,102,241,0.10),
+            0 12px 30px rgba(49,46,129,0.42),
+            inset 0 2px 7px rgba(255,255,255,0.30);
+    }
+}
+
+
+@keyframes targetSuccess {
+    0% {
+        transform: scale(1);
+    }
+
+    40% {
+        transform: scale(1.06);
+    }
+
+    100% {
+        transform: scale(1);
+    }
+}
+
+
+@keyframes targetError {
+    0%, 100% {
+        transform: translateX(0);
+    }
+
+    20% {
+        transform: translateX(-8px);
+    }
+
+    40% {
+        transform: translateX(8px);
+    }
+
+    60% {
+        transform: translateX(-6px);
+    }
+
+    80% {
+        transform: translateX(5px);
+    }
+}
+
+
+@keyframes targetDisappear {
+    0% {
+        opacity: 1;
+        transform: scale(1);
+    }
+
+    100% {
+        opacity: 0;
+        transform: scale(0.85);
+    }
+}
+
+
+/* =====================================================
+   MOBILE
+===================================================== */
+
+@media (max-width: 600px) {
+
+    .typing-target {
+        min-width: 120px;
+        min-height: 60px;
+
+        padding: 14px 18px;
+
+        font-size: 16px;
+
+        border-radius: 12px;
+    }
+}
+
+
+/* =====================================================
+   TARGET HIGHLIGHT
+===================================================== */
+
+.typing-target::before {
+
+    content: "";
+
+    position: absolute;
+
+    width: 32px;
+
+    height: 14px;
+
+    top: 12px;
+
+    left: 22px;
+
+    border-radius: 50%;
+
+    background:
+        rgba(255, 255, 255, 0.25);
+
+    transform:
+        rotate(-25deg);
+
+    pointer-events: none;
+
+}
+
+
+/* =====================================================
+   TARGET PULSE
+===================================================== */
+
+.typing-target.active {
+
+    animation:
+        targetPulse 1.5s ease-in-out infinite;
+
+}
+
+
+/* =====================================================
+   CORRECT ANSWER
+===================================================== */
+
+.typing-target.target-success {
+
+    animation:
+        targetShake 0.38s ease-in-out;
+
+}
+
+
+/* =====================================================
+   DISAPPEAR
+===================================================== */
+
+.typing-target.target-disappear {
+
+    animation:
+        targetDisappear 0.30s ease-out forwards;
+
+}
+
+
+/* =====================================================
+   WRONG ANSWER
+===================================================== */
+
+.typing-target.target-error {
+
+    animation:
+        targetError 0.30s ease-in-out;
+
+}
+
+
+/* =====================================================
+   PULSE ANIMATION
+===================================================== */
+
+@keyframes targetPulse {
+
+    0%,
+    100% {
+
+        box-shadow:
+
+            0 0 0 5px
+            rgba(99, 102, 241, 0.18),
+
+            0 8px 20px
+            rgba(49, 46, 129, 0.35),
+
+            inset 0 3px 8px
+            rgba(255, 255, 255, 0.30);
+
+    }
+
+    50% {
+
+        box-shadow:
+
+            0 0 0 9px
+            rgba(99, 102, 241, 0.14),
+
+            0 10px 28px
+            rgba(49, 46, 129, 0.45),
+
+            inset 0 3px 8px
+            rgba(255, 255, 255, 0.35);
+
+    }
+
+}
+
+
+/* =====================================================
+   SHAKE ANIMATION
+===================================================== */
+
+@keyframes targetShake {
+
+    0% {
+
+        transform:
+            scale(1)
+            translateX(0);
+
+    }
+
+    20% {
+
+        transform:
+            scale(1.05)
+            translateX(-8px);
+
+    }
+
+    40% {
+
+        transform:
+            scale(1.05)
+            translateX(8px);
+
+    }
+
+    60% {
+
+        transform:
+            scale(1.05)
+            translateX(-6px);
+
+    }
+
+    80% {
+
+        transform:
+            scale(1.05)
+            translateX(5px);
+
+    }
+
+    100% {
+
+        transform:
+            scale(1)
+            translateX(0);
+
+    }
+
+}
+
+
+/* =====================================================
+   DISAPPEAR ANIMATION
+===================================================== */
+
+@keyframes targetDisappear {
+
+    0% {
+
+        opacity: 1;
+
+        transform:
+            scale(1);
+
+    }
+
+    50% {
+
+        opacity: 0.7;
+
+        transform:
+            scale(1.15);
+
+    }
+
+    100% {
+
+        opacity: 0;
+
+        transform:
+            scale(0.05);
+
+    }
+
+}
+
+
+/* =====================================================
+   ERROR ANIMATION
+===================================================== */
+
+@keyframes targetError {
+
+    0%,
+    100% {
+
+        transform:
+            translateX(0);
+
+    }
+
+    25% {
+
+        transform:
+            translateX(-7px);
+
+    }
+
+    50% {
+
+        transform:
+            translateX(7px);
+
+    }
+
+    75% {
+
+        transform:
+            translateX(-5px);
+
+    }
+
+}
+
+
+/* =====================================================
+   DIFFICULTY
+===================================================== */
+
+.target-settings {
+
+    display: flex;
+
+    justify-content: center;
+
+    align-items: center;
+
+    gap: 10px;
+
+    margin-bottom: 18px;
+
+}
+
+
+.target-settings label {
+
+    font-weight: 700;
+
+}
+
+
+.target-settings select {
+
+    min-width: 140px;
+
+    padding: 9px 12px;
+
+    border-radius: 8px;
+
+    border:
+        1px solid
+        rgba(127, 127, 127, 0.35);
+
+    background:
+        var(
+            --bg-secondary,
+            #ffffff
+        );
+
+    color:
+        var(
+            --text-primary,
+            #111827
+        );
+
+    font-size: 15px;
+
+    cursor: pointer;
+
+}
+
+
+/* =====================================================
+   MESSAGE
+===================================================== */
+
+.target-message {
+
+    min-height: 28px;
+
+    text-align: center;
+
+    font-weight: 600;
+
+    margin:
+        10px 0 15px;
+
+}
+
+
+/* =====================================================
+   GAME OVER MODAL
+===================================================== */
+
+.target-modal {
+
+    position: fixed;
+
+    inset: 0;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    padding: 20px;
+
+    background:
+        rgba(0, 0, 0, 0.65);
+
+    backdrop-filter:
+        blur(5px);
+
+    -webkit-backdrop-filter:
+        blur(5px);
+
+    opacity: 0;
+
+    visibility: hidden;
+
+    pointer-events: none;
+
+    transition:
+        opacity 0.25s ease,
+        visibility 0.25s ease;
+
+    z-index: 9999;
+
+}
+
+
+.target-modal.show {
+
+    opacity: 1;
+
+    visibility: visible;
+
+    pointer-events: auto;
+
+}
+
+
+/* =====================================================
+   MODAL BOX
+===================================================== */
+
+.target-modal-box {
+
+    width: min(
+        420px,
+        calc(100% - 20px)
+    );
+
+    padding: 28px 24px;
+
+    border-radius: 20px;
+
+    text-align: center;
+
+    background:
+        var(
+            --bg-secondary,
+            #ffffff
+        );
+
+    color:
+        var(
+            --text-primary,
+            #111827
+        );
+
+    border:
+        1px solid
+        rgba(127, 127, 127, 0.25);
+
+    box-shadow:
+
+        0 25px 70px
+        rgba(0, 0, 0, 0.30);
+
+    transform:
+        translateY(20px)
+        scale(0.95);
+
+    transition:
+        transform 0.25s ease;
+
+}
+
+
+.target-modal.show
+.target-modal-box {
+
+    transform:
+        translateY(0)
+        scale(1);
+
+}
+
+
+.target-modal-icon {
+
+    font-size: 48px;
+
+    margin-bottom: 8px;
+
+}
+
+
+.target-modal-box h2 {
+
+    margin:
+        0 0 10px;
+
+    font-size: 26px;
+
+}
+
+
+.target-modal-box p {
+
+    margin:
+        0 0 20px;
+
+    line-height: 1.6;
+
+}
+
+
+.target-modal-buttons {
+
+    display: flex;
+
+    justify-content: center;
+
+    gap: 10px;
+
+    flex-wrap: wrap;
+
+}
+
+
+/* =====================================================
+   DARK MODE
+===================================================== */
+
+@media (prefers-color-scheme: dark) {
+
+    .target-settings select {
+
+        background: #1f2937;
+
+        color: #f9fafb;
+
+        border-color:
+            rgba(255, 255, 255, 0.20);
+
+    }
+
+
+    .target-modal-box {
+
+        background: #1f2937;
+
+        color: #f9fafb;
+
+        border-color:
+            rgba(255, 255, 255, 0.12);
+
+    }
+
+}
+
+
+/* =====================================================
+   MOBILE
+===================================================== */
+
+@media (max-width: 600px) {
+
+    .target-area {
+
+        height: 280px;
+
+    }
+
+
+    .typing-target {
+
+        width: 105px;
+
+        height: 105px;
+
+        padding: 10px;
+
+        border-width: 4px;
+
+        font-size: 15px;
+
+    }
+
+
+    .target-settings {
+
+        flex-direction: column;
+
+    }
+
+
+    .target-modal-box {
+
+        padding:
+            24px 18px;
+
+    }
+
+}
+
+
+/* =====================================================
+   REDUCED MOTION
+===================================================== */
+
+@media (prefers-reduced-motion: reduce) {
+
+    .typing-target,
+    .typing-target.active,
+    .typing-target.target-success,
+    .typing-target.target-disappear,
+    .typing-target.target-error,
+    .target-modal,
+    .target-modal-box {
+
+        animation: none !important;
+
+        transition: none !important;
+
+    }
+
+}
+
+</style>
+
+</head>
+
+
+<body>
+
+
+<div id="app"></div>
+
+
+<main class="main-content">
+
+
+    <div class="page-header">
+
+        <h1>
+            🎯 Target Typing
+        </h1>
+
+        <p>
+            Type the target correctly.
+            Three mistakes end the game.
+        </p>
+
+    </div>
+
+
+    <div class="game-container">
+
+        <div class="game-panel">
+
+
+            <!-- =================================================
+                 GAME STATS
+            ================================================== -->
+
+            <div class="game-top">
+
+
+                <div class="game-stat">
+
+                    <small>
+                        Score
+                    </small>
+
+                    <strong id="score">
+                        0
+                    </strong>
+
+                </div>
+
+
+                <div class="game-stat">
+
+                    <small>
+                        Targets
+                    </small>
+
+                    <strong id="targets">
+                        0
+                    </strong>
+
+                </div>
+
+
+                <div class="game-stat">
+
+                    <small>
+                        Mistakes
+                    </small>
+
+                    <strong id="mistakes">
+                        0 / 3
+                    </strong>
+
+                </div>
+
+
+                <div class="game-stat">
+
+                    <small>
+                        Combo
+                    </small>
+
+                    <strong id="combo">
+                        0
+                    </strong>
+
+                </div>
+
+
+            </div>
+
+
+            <!-- =================================================
+                 DIFFICULTY
+            ================================================== -->
+
+            <div class="target-settings">
+
+
+                <label for="difficulty">
+                    Difficulty:
+                </label>
+
+
+                <select
+                    id="difficulty"
+                    aria-label="Select difficulty">
+
+
+                    <option value="easy">
+
+                        🟢 Easy
+
+                    </option>
+
+
+                    <option
+                        value="medium"
+                        selected>
+
+                        🟡 Medium
+
+                    </option>
+
+
+                    <option value="hard">
+
+                        🔴 Hard
+
+                    </option>
+
+
+                </select>
+
+
+            </div>
+
+
+            <!-- =================================================
+                 TARGET AREA
+            ================================================== -->
+<div
+    id="targetArea"
+    class="target-area"
+    aria-label="Target typing area">
+
+
+    <!-- 5 SECOND TIMER -->
+
+    <div
+        id="targetTimer"
+        class="target-timer"
+        aria-live="polite">
+
+        <div class="target-timer-label">
+
+            ⏱️
+
+            <span>
+                Time:
+            </span>
+
+            <span
+                id="targetTimeNumber"
+                class="target-time-number">
+
+                5
+
+            </span>
+
+            <span>
+                sec
+            </span>
+
+        </div>
+
+
+        <div class="target-timer-track">
+
+            <div
+                id="targetTimerBar"
+                class="target-timer-bar">
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- TARGET WORD -->
+
+    <div
+        id="target"
+        class="typing-target"
+        aria-live="polite">
+
+        READY
+
+    </div>
+
+
+</div>
+
+
+            <!-- =================================================
+                 INPUT
+            ================================================== -->
+
+            <input
+                id="input"
+                class="game-input"
+                type="text"
+                placeholder="Type the target..."
+                disabled
+                autocomplete="off"
+                autocapitalize="off"
+                spellcheck="false"
+                maxlength="60"
+                aria-label="Type target word">
+
+
+            <!-- =================================================
+                 MESSAGE
+            ================================================== -->
+
+            <div
+                id="message"
+                class="target-message"
+                aria-live="polite">
+
+                Press Start to begin.
+
+            </div>
+
+
+            <!-- =================================================
+                 BUTTONS
+            ================================================== -->
+
+            <div class="game-buttons">
+
+
+                <button
+                    class="game-btn"
+                    id="start"
+                    type="button">
+
+                    ▶️ Start
+
+                </button>
+
+
+                <a
+                    href="../games.html"
+                    class="game-btn secondary">
+
+                    ← Back
+
+                </a>
+
+
+            </div>
+
+
+        </div>
+
+    </div>
+
+
+</main>
+
+
+<!-- =========================================================
+     CENTER GAME OVER MODAL
+========================================================= -->
+
+<div
+    id="gameOverModal"
+    class="target-modal"
+    role="dialog"
+    aria-modal="true"
+    aria-labelledby="gameOverTitle">
+
+
+    <div class="target-modal-box">
+
+
+        <div class="target-modal-icon">
+            🎯
+        </div>
+
+
+        <h2 id="gameOverTitle">
+            Game Over
+        </h2>
+
+
+        <p id="resultText">
+            Your game has finished.
+        </p>
+
+
+        <div class="target-modal-buttons">
+
+
+            <button
+                id="playAgain"
+                class="game-btn"
+                type="button">
+
+                🔄 Play Again
+
+            </button>
+
+
+            <button
+                id="closeResult"
+                class="game-btn secondary"
+                type="button">
+
+                ✕ Close
+
+            </button>
+
+
+        </div>
+
+
+    </div>
+
+
+</div>
+
+
+<script src="../js/common.js"></script>
+<script src="../js/app.js"></script>
+<script src="../js/games.js"></script>
+
+
+<script>
+
+"use strict";
+
+
+/* =====================================================
+   TARGET TYPING
+   -----------------------------------------------
+   No timer
+   3 mistakes allowed
+   No localStorage
+   No sessionStorage
+   No browser history
+   No GameStats
+   No external network requests
+===================================================== */
+
+
+/* =====================================================
+   WORD LISTS
+===================================================== */
+
+const WORD_LISTS = {
+
+
+    easy: [
+
+        "cat",
+        "dog",
+        "sun",
+        "book",
+        "tree",
+        "fish",
+        "milk",
+        "home",
+        "ball",
+        "star",
+        "rain",
+        "door",
+        "apple",
+        "chair",
+        "table",
+        "phone",
+        "light",
+        "smile",
+        "cloud",
+        "plant",
+        "river",
+        "music",
+        "bread",
+        "paper",
+        "water",
+        "house",
+		"rent",
+		"pent",
+		"sent",
+		"text",
+		"meat",
+		"seat",
+		"neat",
+		"heat",
+		"rice",
+		"able",
+		"about",
+		"act",
+		"add",
+		"age",
+		"air",
+		"all",
+		"also",
+		"and",
+		"any",
+		"apple",
+		"arm",
+		"art",
+		"ask",
+		"away",
+		"baby",
+		"back",
+		"ball",
+		"bank",
+		"bath",
+		"be",
+		"bear",
+		"bed",
+		"bee",
+		"bell",
+		"best",
+		"big",
+		"bird",
+		"black",
+		"blue",
+		"boat",
+		"body",
+		"book",
+		"boy",
+		"box",
+		"bread",
+		"bring",
+		"brown",
+		"bus",
+		"buy",
+		"call",
+		"came",
+		"car",
+		"care",
+		"cat",
+		"chair",
+		"child",
+		"city",
+		"class",
+		"clean",
+		"clock",
+		"close",
+		"cold",
+		"come",
+		"cook",
+		"cool",
+		"corn",
+		"cow",
+		"cup",
+		"day",
+		"dear",
+		"desk",
+		"door",
+		"down",
+		"draw",
+		"dream",
+		"dress",
+		"drink",
+		"drive",
+		"duck",
+		"easy",
+		"eat",
+		"egg",
+		"else",
+		"even",
+		"eye",
+		"face",
+		"fall",
+		"farm",
+		"fast",
+		"feet",
+		"find",
+		"fire",
+		"fish",
+		"five",
+		"food",
+		"foot",
+		"four",
+		"free",
+		"frog",
+		"game",
+		"girl",
+		"give",
+		"goat",
+		"good",
+		"green",
+		"hand",
+		"happy",
+		"hard",
+		"head",
+		"hear",
+		"help",
+		"home",
+		"hope",
+		"horse",
+		"house",
+		"jump",
+		"keep",
+		"kind",
+		"king",
+		"know",
+		"lake",
+		"land",
+		"last",
+		"late",
+		"laugh",
+		"learn",
+		"light",
+		"like",
+		"lion"
+
+    ],
+
+
+    medium: [
+
+        "keyboard",
+        "computer",
+        "practice",
+        "typing",
+        "accuracy",
+        "rhythm",
+        "learning",
+        "challenge",
+        "progress",
+        "student",
+        "language",
+        "internet",
+        "creative",
+        "message",
+        "exercise",
+        "important",
+        "technology",
+        "communication",
+        "concentration",
+        "improvement",
+        "performance",
+        "experience",
+        "successful",
+        "efficient",
+        "development",
+        "attention",
+		"wheat",
+		"ability",
+		"absence",
+		"academy",
+		"account",
+		"achieve",
+		"acquire",
+		"adapt",
+		"advance",
+		"advice",
+		"affect",
+		"against",
+		"airport",
+		"alarm",
+		"ancient",
+		"annual",
+		"anxiety",
+		"apparent",
+		"appeal",
+		"appoint",
+		"approach",
+		"approve",
+		"arrange",
+		"arrival",
+		"article",
+		"aspect",
+		"assist",
+		"assume",
+		"attempt",
+		"attract",
+		"average",
+		"balance",
+		"barrier",
+		"benefit",
+		"beyond",
+		"breathe",
+		"briefly",
+		"capture",
+		"career",
+		"careful",
+		"certain",
+		"challenge",
+		"chapter",
+		"charity",
+		"choice",
+		"circumstance",
+		"citizen",
+		"clarify",
+		"classic",
+		"climate",
+		"combine",
+		"comfort",
+		"command",
+		"comment",
+		"compare",
+		"compete",
+		"complex",
+		"concern",
+		"confirm",
+		"connect",
+		"consider",
+		"consist",
+		"constant",
+		"contain",
+		"content",
+		"context",
+		"control",
+		"convert",
+		"correct",
+		"courage",
+		"create",
+		"crucial",
+		"culture",
+		"curious",
+		"current",
+		"custom",
+		"debate",
+		"decade",
+		"decide",
+		"declare",
+		"decline",
+		"default",
+		"defend",
+		"define",
+		"degree",
+		"deliver",
+		"demand",
+		"depend",
+		"describe",
+		"design",
+		"desire",
+		"detail",
+		"develop",
+		"device",
+		"differ",
+		"direct",
+		"discover",
+		"display",
+		"distance",
+		"divide",
+		"doctor",
+		"doubt",
+		"draft",
+		"dynamic",
+		"eager",
+		"earlier",
+		"easily",
+		"economy",
+		"educate",
+		"effect",
+		"effort",
+		"elderly",
+		"element",
+		"emerge",
+		"emotion",
+		"emphasis",
+		"enable",
+		"encounter",
+		"energy",
+		"enhance",
+		"enough",
+		"ensure",
+		"entire",
+		"environment",
+		"equal",
+		"escape",
+		"essential",
+		"establish",
+		"estimate",
+		"eventually",
+		"evidence",
+		"exactly",
+		"examine",
+		"example",
+		"excite",
+		"exist",
+		"expand",
+		"expect",
+		"experience",
+		"explain",
+		"explore",
+		"express",
+		"failure",
+		"familiar",
+		"feature",
+		"federal",
+		"fiction",
+		"finance",
+		"focus",
+		"foreign",
+		"formal",
+		"freedom",
+		"frequent",
+		"function",
+		"future",
+		"general",
+		"generate",
+		"genuine",
+		"global",
+		"gradual",
+		"greatest",
+		"growth",
+		"guard",
+		"habit",
+		"handle",
+		"happen",
+		"healthy",
+		"honest",
+		"however",
+		"identify",
+		"ignore",
+		"imagine",
+		"immediate",
+		"impact",
+		"improve",
+		"include",
+		"increase",
+		"indicate",
+		"individual",
+		"industry",
+		"inform",
+		"initial",
+		"inquiry",
+		"inside",
+		"inspire",
+		"install",
+		"instead",
+		"intention",
+		"interest",
+		"internal",
+		"involve",
+		"isolate",
+		"journey",
+		"justice",
+		"knowledge",
+		"language",
+		"largely",
+		"latest",
+		"launch",
+		"leader",
+		"legal",
+		"lesson",
+		"library",
+		"limit",
+		"listen",
+		"locate",
+		"logical",
+		"manage",
+		"manner",
+		"market",
+		"material",
+		"measure",
+		"medical",
+		"mention",
+		"method",
+		"middle",
+		"minimum",
+		"minority",
+		"modern",
+		"monitor",
+		"motivate",
+		"natural",
+		"nearly",
+		"necessary",
+		"negative",
+		"network",
+		"notice",
+		"obtain",
+		"obvious",
+		"occasion",
+		"operate",
+		"opinion",
+		"opportunity",
+		"ordinary",
+		"original",
+		"outcome",
+		"outside",
+		"overall",
+		"package",
+		"parent",
+		"particular",
+		"patient",
+		"pattern",
+		"perform",
+		"period",
+		"permit",
+		"personal",
+		"perspective",
+		"physical",
+		"picture",
+		"planet",
+		"pleasant",
+		"policy",
+		"popular",
+		"position",
+		"positive",
+		"possible",
+		"powerful",
+		"practice",
+		"prepare",
+		"present",
+		"prevent",
+		"primary",
+		"principle",
+		"private",
+		"problem",
+		"process",
+		"produce",
+		"progress",
+		"project",
+		"promise",
+		"protect",
+		"provide",
+		"purpose",
+		"quality",
+		"quickly",
+		"realize",
+		"reason",
+		"receive",
+		"recent",
+		"recognize",
+		"recommend",
+		"reduce",
+		"reflect",
+		"refuse",
+		"regular",
+		"relate",
+		"remain",
+		"remove",
+		"replace",
+		"require",
+		"research",
+		"resolve",
+		"resource",
+		"respect",
+		"respond",
+		"result",
+		"reveal",
+		"review",
+		"routine",
+		"safety",
+		"sample",
+		"satisfy",
+		"schedule",
+		"section",
+		"secure",
+		"select",
+		"serious",
+		"service",
+		"similar",
+		"simple",
+		"sincere",
+		"society",
+		"source",
+		"specific",
+		"standard",
+		"statement",
+		"strategy",
+		"strength",
+		"subject",
+		"success",
+		"suggest",
+		"support",
+		"suppose",
+		"surface",
+		"surprise",
+		"surround",
+		"system",
+		"talent",
+		"target",
+		"teacher",
+		"technical",
+		"technology",
+		"temporary",
+		"tend",
+		"theory",
+		"therefore",
+		"thought",
+		"throughout",
+		"together",
+		"toward",
+		"traditional",
+		"training",
+		"transfer",
+		"transform",
+		"travel",
+		"treat",
+		"typical",
+		"unique",
+		"update",
+		"useful",
+		"usually",
+		"valuable",
+		"variety",
+		"vehicle",
+		"version",
+		"victory",
+		"village",
+		"visible",
+		"vision",
+		"volume",
+		"weather",
+		"welcome",
+		"welfare",
+		"whether",
+		"willing",
+		"wonder",
+		"worker",
+		"worry",
+		"worthy",
+		"achiever",
+		"addition",
+		"adjustment",
+		"admission",
+		"agreement",
+		"analysis",
+		"announce",
+		"application",
+		"argument",
+		"assistant",
+		"attention",
+		"attitude",
+		"authority",
+		"available",
+		"behavior",
+		"building",
+		"capacity",
+		"category",
+		"chemical",
+		"collection",
+		"community",
+		"comparison",
+		"competition",
+		"condition",
+		"confidence",
+		"connection",
+		"consequence",
+		"construction",
+		"consumer",
+		"contribution",
+		"conversation",
+		"creation",
+		"decision",
+		"definition",
+		"department",
+		"description",
+		"development",
+		"difference",
+		"direction",
+		"discussion",
+		"education",
+		"employee",
+		"employer",
+		"employment",
+		"entertain",
+		"equipment",
+		"essential",
+		"evaluation",
+		"exchange",
+		"execution",
+		"existence",
+		"expansion",
+		"expectation",
+		"explanation",
+		"expression",
+		"extension",
+		"facility",
+		"foundation",
+		"generation",
+		"government",
+		"guidance",
+		"importance",
+		"impression",
+		"improvement",
+		"information",
+		"instruction",
+		"interaction",
+		"introduction",
+		"investment",
+		"knowledge",
+		"leadership",
+		"location",
+		"management",
+		"measurement",
+		"membership",
+		"movement",
+		"necessity",
+		"operation",
+		"organization",
+		"participant",
+		"performance",
+		"permission",
+		"planning",
+		"population",
+		"preparation",
+		"presentation",
+		"production",
+		"professional",
+		"promotion",
+		"protection",
+		"reaction",
+		"reality",
+		"relationship",
+		"requirement",
+		"resolution",
+		"responsibility",
+		"selection",
+		"solution",
+		"statement",
+		"structure",
+		"suggestion",
+		"superior",
+		"technology",
+		"tradition",
+		"transport",
+		"understand",
+		"variation",
+		"achievement",
+		"adventure",
+		"agreement",
+		"alternative",
+		"ambition",
+		"analysis",
+		"announcement",
+		"appearance",
+		"application",
+		"appointment",
+		"argument",
+		"arrangement",
+		"attention",
+		"atmosphere",
+		"background",
+		"boundary",
+		"campaign",
+		"candidate",
+		"capacity",
+		"character",
+		"circumstance",
+		"collection",
+		"comfortable",
+		"commercial",
+		"communication",
+		"complaint",
+		"component",
+		"conclusion",
+		"condition",
+		"conference",
+		"confidence",
+		"conflict",
+		"confusion",
+		"considerable",
+		"consistent",
+		"consumer",
+		"contact",
+		"contemporary",
+		"convenient",
+		"cooperation",
+		"creative",
+		"criminal",
+		"critical",
+		"curiosity",
+		"customer",
+		"dangerous",
+		"decision",
+		"defensive",
+		"demonstrate",
+		"destination",
+		"discussion",
+		"domestic",
+		"dramatic",
+		"effective",
+		"efficient",
+		"electric",
+		"emergency",
+		"emotional",
+		"employment",
+		"enormous",
+		"enterprise",
+		"entertainment",
+		"environmental",
+		"equipment",
+		"especially",
+		"excellent",
+		"experiment",
+		"explanation",
+		"familiarity",
+		"flexible",
+		"generation",
+		"historical",
+		"independent",
+		"influence",
+		"initiative",
+		"innovation",
+		"inspection",
+		"intelligent",
+		"introduction",
+		"invention",
+		"involved",
+		"leadership",
+		"maintenance",
+		"management",
+		"manufacture",
+		"motivation",
+		"negative",
+		"objective",
+		"observation",
+		"official",
+		"operation",
+		"opposition",
+		"organization",
+		"original",
+		"participant",
+		"partnership",
+		"permission",
+		"potential",
+		"practical",
+		"preference",
+		"preserve",
+		"priority",
+		"procedure",
+		"process",
+		"professional",
+		"promotion",
+		"proposal",
+		"reasonable",
+		"recovery",
+		"reference",
+		"reflection",
+		"regional",
+		"relevant",
+		"reputation",
+		"requirement",
+		"researcher",
+		"responsible",
+		"security",
+		"significant",
+		"solution",
+		"successful",
+		"sufficient",
+		"technical",
+		"temporary",
+		"threaten",
+		"traditional",
+		"unusual",
+		"valuable",
+		"volunteer",
+		"workplace",
+		"academic",
+		"accurate",
+		"advanced",
+		"aggressive",
+		"appropriate",
+		"attractive",
+		"automatic",
+		"available",
+		"beneficial",
+		"capable",
+		"carefully",
+		"central",
+		"challenging",
+		"competitive",
+		"confident",
+		"conscious",
+		"creative",
+		"critical",
+		"curious",
+		"deliberate",
+		"dependent",
+		"different",
+		"difficult",
+		"digital",
+		"efficient",
+		"effective",
+		"favorable",
+		"financial",
+		"frequently",
+		"gradually",
+		"independent",
+		"individual",
+		"informal",
+		"innovative",
+		"intellectual",
+		"international",
+		"important",
+		"interesting",
+		"legal",
+		"limited",
+		"majority",
+		"negative",
+		"obvious",
+		"occasional",
+		"official",
+		"ordinary",
+		"original",
+		"particular",
+		"permanent",
+		"physical",
+		"political",
+		"powerful",
+		"precise",
+		"previous",
+		"productive",
+		"reasonable",
+		"reliable",
+		"remarkable",
+		"responsible",
+		"scientific",
+		"separate",
+		"serious",
+		"similar",
+		"specific",
+		"successful",
+		"suitable",
+		"technical",
+		"thorough",
+		"traditional",
+		"uncertain",
+		"valuable",
+		"various",
+		"visible",
+		"widespread"
+		
+
+    ],
+
+
+    hard: [
+
+        "coordination",
+        "concentration",
+        "productivity",
+        "communication",
+        "determination",
+        "responsibility",
+        "extraordinary",
+        "professional",
+        "transformation",
+        "organization",
+        "characteristic",
+        "understanding",
+        "environment",
+        "opportunity",
+        "achievement",
+        "independent",
+        "information",
+        "imagination",
+        "relationship",
+        "accessibility",
+        "intelligence",
+        "conversation",
+        "application",
+        "technological",
+        "creativity",
+        "efficiently",
+		"abbreviation",
+		"abnormality",
+		"abolishment",
+		"abstraction",
+		"accelerating",
+		"accommodation",
+		"acknowledgment",
+		"acquisition",
+		"adaptability",
+		"administration",
+		"adolescence",
+		"aesthetic",
+		"affiliation",
+		"agriculture",
+		"algorithmic",
+		"ambiguous",
+		"amplification",
+		"analytical",
+		"anniversary",
+		"anticipation",
+		"appreciation",
+		"approximate",
+		"architecture",
+		"articulation",
+		"astonishing",
+		"authenticity",
+		"authorization",
+		"availability",
+		"beneficiary",
+		"biographical",
+		"bureaucratic",
+		"calculation",
+		"capability",
+		"categorization",
+		"characteristic",
+		"circumstantial",
+		"clarification",
+		"classification",
+		"collaboration",
+		"collectively",
+		"commencement",
+		"communication",
+		"compatibility",
+		"compensation",
+		"complexity",
+		"comprehensive",
+		"concentration",
+		"conceptual",
+		"configuration",
+		"conservation",
+		"consideration",
+		"consistency",
+		"consolidation",
+		"constitution",
+		"consultation",
+		"contemporary",
+		"contradiction",
+		"conventional",
+		"coordination",
+		"correspondence",
+		"credibility",
+		"cryptography",
+		"customization",
+		"decentralized",
+		"declaration",
+		"dedication",
+		"deficiency",
+		"deliberately",
+		"demonstration",
+		"dependency",
+		"descriptive",
+		"determination",
+		"differentiation",
+		"disadvantage",
+		"disagreement",
+		"disappearance",
+		"discrimination",
+		"documentation",
+		"dramatically",
+		"duplication",
+		"economically",
+		"elaboration",
+		"eligibility",
+		"embarrassment",
+		"emphasizing",
+		"enforcement",
+		"engineering",
+		"enhancement",
+		"entrepreneur",
+		"entrepreneurial",
+		"environmental",
+		"equivalent",
+		"establishment",
+		"exceptional",
+		"excessive",
+		"explanation",
+		"exploration",
+		"extraordinary",
+		"facilitation",
+		"familiarization",
+		"flexibility",
+		"formulation",
+		"fundamental",
+		"generalization",
+		"geographical",
+		"globalization",
+		"hierarchical",
+		"hypothetical",
+		"identification",
+		"illustration",
+		"implementation",
+		"implication",
+		"impossibility",
+		"inappropriate",
+		"infrastructure",
+		"inquisitive",
+		"inspection",
+		"installation",
+		"institutional",
+		"interpretation",
+		"investigation",
+		"justification",
+		"knowledgeable",
+		"legislation",
+		"legislative",
+		"legitimate",
+		"liability",
+		"linguistic",
+		"manufacturing",
+		"mathematical",
+		"measurement",
+		"methodology",
+		"misunderstanding",
+		"modification",
+		"multicultural",
+		"nevertheless",
+		"notification",
+		"occasionally",
+		"optimization",
+		"organization",
+		"organizational",
+		"participation",
+		"particularly",
+		"perpendicular",
+		"philosophical",
+		"possibility",
+		"practically",
+		"preliminary",
+		"prescription",
+		"presentation",
+		"prioritization",
+		"probability",
+		"problematic",
+		"proceedings",
+		"professionalism",
+		"proportionately",
+		"qualification",
+		"questionnaire",
+		"reconciliation",
+		"recommendation",
+		"reconstruction",
+		"redistribution",
+		"registration",
+		"regulation",
+		"rehabilitation",
+		"representation",
+		"requirement",
+		"responsibility",
+		"revolutionary",
+		"satisfaction",
+		"simultaneously",
+		"sophisticated",
+		"specialization",
+		"specification",
+		"stabilization",
+		"statistical",
+		"strategically",
+		"substantial",
+		"substitution",
+		"sustainability",
+		"technological",
+		"transformation",
+		"transmission",
+		"transparency",
+		"unavailability",
+		"unprecedented",
+		"verification",
+		"vulnerability",
+		"administrative",
+		"advancement",
+		"affectionately",
+		"alphabetically",
+		"anthropology",
+		"archaeological",
+		"argumentative",
+		"artificial",
+		"authentic",
+		"beneficially",
+		"biotechnology",
+		"bureaucracy",
+		"characterization",
+		"chronological",
+		"circumference",
+		"civilization",
+		"classification",
+		"coincidence",
+		"commercialization",
+		"compassionate",
+		"competitiveness",
+		"complementary",
+		"complication",
+		"comprehensive",
+		"concentration",
+		"confidentiality",
+		"congratulation",
+		"conscientious",
+		"consequence",
+		"consequently",
+		"considerably",
+		"constructive",
+		"consultative",
+		"contradictory",
+		"controversial",
+		"conventional",
+		"cooperative",
+		"corporation",
+		"correlation",
+		"credibility",
+		"critically",
+		"cultivation",
+		"decomposition",
+		"deductible",
+		"deforestation",
+		"demonstrative",
+		"demographic",
+		"destruction",
+		"deterioration",
+		"determination",
+		"developmental",
+		"differential",
+		"disadvantaged",
+		"discontinuous",
+		"discrimination",
+		"distinguishable",
+		"documentation",
+		"electromagnetic",
+		"electrification",
+		"eligibility",
+		"embodiment",
+		"empirical",
+		"encyclopedia",
+		"entrepreneurship",
+		"epidemiological",
+		"equilibrium",
+		"essentially",
+		"estimation",
+		"evolutionary",
+		"exaggeration",
+		"experimental",
+		"extravagant",
+		"facilitating",
+		"feasibility",
+		"fluctuation",
+		"formidable",
+		"functional",
+		"fundamentally",
+		"genealogical",
+		"geometrical",
+		"globalization",
+		"grammatical",
+		"grievance",
+		"harmonization",
+		"heterogeneous",
+		"hierarchy",
+		"hypothetically",
+		"illustrative",
+		"imagination",
+		"immeasurable",
+		"immediately",
+		"impartiality",
+		"implementation",
+		"inaccessible",
+		"inadvertently",
+		"incompatible",
+		"incompetence",
+		"inconsistency",
+		"incorporation",
+		"increasingly",
+		"independence",
+		"indispensable",
+		"industrialization",
+		"inefficient",
+		"inequality",
+		"infrastructure",
+		"inhabitant",
+		"initialization",
+		"innovation",
+		"insufficient",
+		"intellectual",
+		"interdisciplinary",
+		"interference",
+		"intermediate",
+		"internationalization",
+		"interpretation",
+		"interrelationship",
+		"intervention",
+		"intimidating",
+		"intricately",
+		"investigative",
+		"irreversible",
+		"jurisdiction",
+		"justification",
+		"knowledge",
+		"laboratory",
+		"legitimacy",
+		"legislature",
+		"liberalization",
+		"logistically",
+		"magnification",
+		"manipulation",
+		"metamorphosis",
+		"microprocessor",
+		"misconception",
+		"misinterpretation",
+		"multidimensional",
+		"multiplication",
+		"negotiation",
+		"nonetheless",
+		"objectification",
+		"observation",
+		"occasionally",
+		"operational",
+		"optimization",
+		"organizational",
+		"orientation",
+		"participatory",
+		"perception",
+		"permanently",
+		"pharmaceutical",
+		"phenomenon",
+		"philosopher",
+		"photographic",
+		"polarization",
+		"possessiveness",
+		"practitioner",
+		"preoccupation",
+		"preservation",
+		"probabilistic",
+		"procrastination",
+		"productivity",
+		"proportional",
+		"qualification",
+		"quantitative",
+		"questionable",
+		"rationalization",
+		"reconsideration",
+		"reconstruction",
+		"redistribution",
+		"redundancy",
+		"refinement",
+		"refrigeration",
+		"rehabilitation",
+		"reinforcement",
+		"reinterpretation",
+		"reorganization",
+		"representation",
+		"reproducibility",
+		"revolutionization",
+		"safeguarding",
+		"simultaneous",
+		"sophistication",
+		"specialization",
+		"specifically",
+		"standardization",
+		"statistically",
+		"subordination",
+		"subsequently",
+		"substantial",
+		"superficially",
+		"supplementary",
+		"susceptibility",
+		"synchronization",
+		"systematically",
+		"telecommunication",
+		"terminology",
+		"transformation",
+		"transitionally",
+		"transparency",
+		"uncharacteristic",
+		"understanding",
+		"unfortunately",
+		"unpredictable",
+		"unquestionable",
+		"unsatisfactory",
+		"utilization",
+		"vulnerability",
+		"acknowledgement",
+		"accomplishment",
+		"accumulation",
+		"acknowledging",
+		"administratively",
+		"affordability",
+		"agglomeration",
+		"allegorical",
+		"ambassadorial",
+		"amalgamation",
+		"anachronistic",
+		"anthropological",
+		"antagonistic",
+		"applicability",
+		"approximation",
+		"arbitration",
+		"artificially",
+		"assassination",
+		"authoritarian",
+		"autobiographical",
+		"bureaucratically",
+		"circumstantial",
+		"civilianization",
+		"collaborative",
+		"commensurate",
+		"conceptualization",
+		"confidential",
+		"confrontation",
+		"conglomerate",
+		"conscientiously",
+		"consequential",
+		"constitutional",
+		"contextualization",
+		"contradictory",
+		"controversially",
+		"counterproductive",
+		"cryptographic",
+		"decentralization",
+		"deconstruction",
+		"deforestation",
+		"delegation",
+		"deliberation",
+		"demonstrably",
+		"deprivation",
+		"desensitization",
+		"deteriorating",
+		"diplomatic",
+		"disadvantageous",
+		"discontinuity",
+		"disproportionate",
+		"distortion",
+		"diversification",
+		"documentation",
+		"domestication",
+		"ecological",
+		"econometric",
+		"electromagnetic",
+		"emancipation",
+		"embarrassing",
+		"empowerment",
+		"encompassing",
+		"encouragement",
+		"enforcement",
+		"entanglement",
+		"environmentalist",
+		"epistemological",
+		"equivalence",
+		"erroneously",
+		"establishment",
+		"exceptionally",
+		"exclusionary",
+		"experimentation",
+		"exploitation",
+		"extensibility",
+		"extraterrestrial",
+		"facilitation",
+		"falsification",
+		"familiarization",
+		"fragmentation",
+		"generalization",
+		"geographically",
+		"globalization",
+		"gratification",
+		"hallucination",
+		"heterogeneity",
+		"humanitarian",
+		"ideological",
+		"illustration",
+		"immunization",
+		"impenetrable",
+		"impoverishment",
+		"inaccurately",
+		"inauguration",
+		"incompatibility",
+		"inconclusive",
+		"indiscriminate",
+		"industrialization",
+		"inevitability",
+		"influential",
+		"informational",
+		"institutionalization",
+		"instrumentation",
+		"interconnectivity",
+		"interdependence",
+		"intergovernmental",
+		"interoperability",
+		"interpretative",
+		"interrogation",
+		"intravenous",
+		"investigative",
+		"irreconcilable",
+		"jurisdictional",
+		"lexicographical",
+		"magnificent",
+		"meticulous",
+		"microeconomic",
+		"miscalculation",
+		"miscommunication",
+		"misrepresentation",
+		"multilingual",
+		"multinational",
+		"neurobiological",
+		"noncompliance",
+		"objectively",
+		"overwhelming",
+		"parameterization",
+		"perceptibility",
+		"perpendicularity",
+		"pharmaceutical",
+		"photovoltaic",
+		"predominantly",
+		"prequalification",
+		"procrastinating",
+		"professional",
+		"proportionality",
+		"psychological",
+		"quantification",
+		"questionnaire",
+		"rationalization",
+		"reclassification",
+		"recommendations",
+		"reconciliation",
+		"reconsideration",
+		"reconstruction",
+		"reorganization",
+		"respectability",
+		"responsiveness",
+		"revolutionary",
+		"sociological",
+		"specialization",
+		"standardization",
+		"subconscious",
+		"substantially",
+		"superintendent",
+		"susceptibility",
+		"synchronization",
+		"technological",
+		"telecommunications",
+		"thermodynamic",
+		"transcendental",
+		"transcription",
+		"transformation",
+		"transnational",
+		"transparency",
+		"unconditionally",
+		"underestimated",
+		"unprecedented",
+		"unpredictability",
+		"unprofessional",
+		"unnecessarily",
+		"unconstitutional",
+		"unconventional",
+		"underprivileged",
+		"utilitarian",
+		"vandalization",
+		"verification",
+		"visualization",
+		"voluntarily",
+		"vulnerability"
+
+    ]
+
+};
+
+
+"use strict";
+
+/* =====================================================
+   TARGET TYPING GAME
+   -----------------------------------------------------
+   Rules:
+   • Every word has exactly 5 seconds.
+   • Timer is internal; no timer display is required.
+   • Wrong character is detected immediately.
+   • Wrong character = 1 mistake.
+   • Wrong character immediately removes current word.
+   • Input is cleared before every new word.
+   • Time exceeded = 1 mistake.
+   • 3 mistakes = Game Over.
+   • Easy / Medium / Hard all use 5 seconds.
+   • No localStorage.
+   • No sessionStorage.
+   • No browser history.
+   • No external requests.
+===================================================== */
+
+
+/* =====================================================
+   DIFFICULTY
+===================================================== */
+
+const DIFFICULTY = {
+
+    easy: {
+        points: 10,
+        time: 5000
+    },
+
+    medium: {
+        points: 15,
+        time: 5000
+    },
+
+    hard: {
+        points: 25,
+        time: 5000
+    }
+
+};
+
+
+/* =====================================================
+   GAME VARIABLES
+===================================================== */
+
+let score = 0;
+let targets = 0;
+let combo = 0;
+let mistakes = 0;
+
+let playing = false;
+
+let currentWord = "";
+let lastWord = "";
+
+let difficulty = "medium";
+
+/*
+ * Unique timer ID for the current word.
+ */
+let wordTimer = null;
+
+/*
+ * Used to identify the currently active word.
+ * This prevents old timers from affecting
+ * newly created words.
+ */
+let wordGeneration = 0;
+
+/*
+ * Prevents two events from processing
+ * the same target.
+ */
+let targetLocked = false;
+
+
+/* =====================================================
+   DOM
+===================================================== */
+
+const targetArea =
+    document.getElementById("targetArea");
+
+const target =
+    document.getElementById("target");
+
+const input =
+    document.getElementById("input");
+
+const startButton =
+    document.getElementById("start");
+
+const playAgainButton =
+    document.getElementById("playAgain");
+
+const closeResultButton =
+    document.getElementById("closeResult");
+
+const gameOverModal =
+    document.getElementById("gameOverModal");
+
+const resultText =
+    document.getElementById("resultText");
+
+const message =
+    document.getElementById("message");
+
+const difficultySelect =
+    document.getElementById("difficulty");
+
+
+/* =====================================================
+   UPDATE DISPLAY
+===================================================== */
+
+function updateDisplay() {
+
+    document.getElementById("score").textContent =
+        String(score);
+
+    document.getElementById("targets").textContent =
+        String(targets);
+
+    document.getElementById("mistakes").textContent =
+        `${mistakes} / 3`;
+
+    document.getElementById("combo").textContent =
+        String(combo);
+}
+
+
+/* =====================================================
+   CLEAR WORD TIMER
+===================================================== */
+
+function clearWordTimer() {
+
+    if (wordTimer !== null) {
+
+        clearTimeout(wordTimer);
+
+        wordTimer = null;
+    }
+}
+
+
+/* =====================================================
+   GET RANDOM WORD
+===================================================== */
+
+function getRandomWord() {
+
+    const list =
+        WORD_LISTS[difficulty] ||
+        WORD_LISTS.medium;
+
+    if (!Array.isArray(list) || list.length === 0) {
+        return "typing";
+    }
+
+    let word;
+
+    /*
+     * Avoid immediate repetition.
+     */
+    do {
+
+        word =
+            list[
+                Math.floor(
+                    Math.random() * list.length
+                )
+            ];
+
+    } while (
+        list.length > 1 &&
+        word === lastWord
+    );
+
+    lastWord = word;
+
+    return String(word).trim().toLowerCase();
+}
+
+
+/* =====================================================
+   FONT SIZE
+===================================================== */
+
+function setTargetFontSize(word) {
+
+    const length = word.length;
+
+    let size = 20;
+
+    if (length >= 22) {
+        size = 11;
+    }
+    else if (length >= 18) {
+        size = 12;
+    }
+    else if (length >= 15) {
+        size = 14;
+    }
+    else if (length >= 12) {
+        size = 16;
+    }
+    else if (length >= 9) {
+        size = 18;
+    }
+
+    target.style.fontSize =
+        `${size}px`;
+}
+
+
+/* =====================================================
+   POSITION TARGET
+===================================================== */
+
+function positionTarget() {
+
+    const areaWidth =
+        targetArea.clientWidth;
+
+    const areaHeight =
+        targetArea.clientHeight;
+
+    const targetWidth =
+        target.offsetWidth;
+
+    const targetHeight =
+        target.offsetHeight;
+
+    const padding = 10;
+
+    const maxX =
+        Math.max(
+            padding,
+            areaWidth - targetWidth - padding
+        );
+
+    const maxY =
+        Math.max(
+            padding,
+            areaHeight - targetHeight - padding
+        );
+
+    const x =
+        padding +
+        Math.random() *
+        Math.max(0, maxX - padding);
+
+    const y =
+        padding +
+        Math.random() *
+        Math.max(0, maxY - padding);
+
+    target.style.left =
+        `${Math.round(x)}px`;
+
+    target.style.top =
+        `${Math.round(y)}px`;
+
+    target.style.transform =
+        "none";
+}
+
+
+/* =====================================================
+   RESET TARGET ANIMATION
+===================================================== */
+
+function resetTargetClasses() {
+
+    target.classList.remove(
+        "active",
+        "target-success",
+        "target-disappear",
+        "target-error"
+    );
+
+    /*
+     * Force browser reflow so animations
+     * can restart correctly.
+     */
+    void target.offsetWidth;
+}
+
+
+/* =====================================================
+   CREATE NEW TARGET
+===================================================== */
+
+function newTarget() {
+
+    if (!playing) {
+        return;
+    }
+
+    /*
+     * Cancel previous timer.
+     */
+    clearWordTimer();
+
+    /*
+     * Unlock the new target.
+     */
+    targetLocked = false;
+
+    /*
+     * Generate a unique ID for this target.
+     */
+    wordGeneration++;
+
+    const thisGeneration =
+        wordGeneration;
+
+    /*
+     * Get word.
+     */
+    currentWord =
+        getRandomWord();
+
+    /*
+     * Completely refresh input.
+     */
+    input.value = "";
+
+    /*
+     * Remove old animation.
+     */
+    resetTargetClasses();
+
+    /*
+     * Display word.
+     */
+    target.textContent =
+        currentWord;
+
+    target.style.opacity =
+        "1";
+
+    setTargetFontSize(
+        currentWord
+    );
+
+    /*
+     * Force layout before positioning.
+     */
+    void target.offsetWidth;
+
+    positionTarget();
+
+    target.classList.add(
+        "active"
+    );
+
+    /*
+     * Focus input.
+     */
+    input.focus();
+
+    /*
+     * =================================================
+     * EXACTLY 5 SECOND TIMER
+     * =================================================
+     */
+
+    wordTimer =
+        window.setTimeout(
+            function () {
+
+                /*
+                 * Ignore old timers.
+                 */
+                if (
+                    !playing ||
+                    thisGeneration !== wordGeneration ||
+                    targetLocked
+                ) {
+                    return;
+                }
+
+                /*
+                 * Time expired.
+                 */
+                handleTimeout();
+
+            },
+            DIFFICULTY[difficulty].time
+        );
+}
+
+
+/* =====================================================
+   CORRECT ANSWER
+===================================================== */
+
+function handleCorrectAnswer() {
+
+    if (
+        !playing ||
+        targetLocked
+    ) {
+        return;
+    }
+
+    /*
+     * Lock immediately.
+     */
+    targetLocked = true;
+
+    /*
+     * Stop timer immediately.
+     */
+    clearWordTimer();
+
+    const settings =
+        DIFFICULTY[difficulty] ||
+        DIFFICULTY.medium;
+
+    combo++;
+
+    targets++;
+
+    const comboBonus =
+        Math.min(
+            combo * 2,
+            20
+        );
+
+    const points =
+        settings.points +
+        comboBonus;
+
+    score += points;
+
+    updateDisplay();
+
+    /*
+     * Clear input immediately.
+     */
+    input.value = "";
+
+    /*
+     * Visual success.
+     */
+    target.classList.remove(
+        "active"
+    );
+
+    target.classList.add(
+        "target-success"
+    );
+
+    message.textContent =
+        `✓ Correct! +${points} points`;
+
+    /*
+     * Move to next target after
+     * short visual feedback.
+     */
+    window.setTimeout(
+        function () {
+
+            if (!playing) {
+                return;
+            }
+
+            target.classList.remove(
+                "target-success"
+            );
+
+            target.classList.add(
+                "target-disappear"
+            );
+
+            window.setTimeout(
+                function () {
+
+                    if (!playing) {
+                        return;
+                    }
+
+                    newTarget();
+
+                },
+                220
+            );
+
+        },
+        350
+    );
+}
+
+
+/* =====================================================
+   WRONG ANSWER
+===================================================== */
+
+function handleMistake(reason) {
+
+    if (
+        !playing ||
+        targetLocked
+    ) {
+        return;
+    }
+
+    /*
+     * Lock this target.
+     */
+    targetLocked = true;
+
+    /*
+     * Stop its timer.
+     */
+    clearWordTimer();
+
+    mistakes++;
+
+    combo = 0;
+
+    updateDisplay();
+
+    /*
+     * Clear input immediately.
+     */
+    input.value = "";
+
+    /*
+     * Visual error.
+     */
+    target.classList.remove(
+        "target-error"
+    );
+
+    void target.offsetWidth;
+
+    target.classList.add(
+        "target-error"
+    );
+
+    if (reason === "timeout") {
+
+        message.textContent =
+            "⏰ Time expired! New word...";
+
+    }
+    else {
+
+        message.textContent =
+            `❌ Wrong typing! Mistake ${mistakes} of 3`;
+
+    }
+
+    /*
+     * Game over?
+     */
+    if (mistakes >= 3) {
+
+        window.setTimeout(
+            endGame,
+            350
+        );
+
+        return;
+    }
+
+    /*
+     * New word immediately after
+     * a short error animation.
+     */
+    window.setTimeout(
+        function () {
+
+            if (!playing) {
+                return;
+            }
+
+            newTarget();
+
+        },
+        300
+    );
+}
+
+
+/* =====================================================
+   TIMEOUT
+===================================================== */
+
+function handleTimeout() {
+
+    if (
+        !playing ||
+        targetLocked
+    ) {
+        return;
+    }
+
+    handleMistake(
+        "timeout"
+    );
+}
+
+
+/* =====================================================
+   LIVE INPUT CHECK
+===================================================== */
+
+function checkInput() {
+
+    if (
+        !playing ||
+        targetLocked
+    ) {
+        return;
+    }
+
+    /*
+     * Do NOT trim the input.
+     *
+     * Spaces are valid characters.
+     * This also makes comparison exact.
+     */
+    const typed =
+        input.value.toLowerCase();
+
+    const expected =
+        currentWord.toLowerCase();
+
+    /*
+     * =================================================
+     * LIVE CHARACTER CHECK
+     *
+     * As soon as any typed character is wrong,
+     * the target is considered a mistake.
+     * =================================================
+     */
+
+    for (
+        let i = 0;
+        i < typed.length;
+        i++
+    ) {
+
+        if (
+            typed[i] !== expected[i]
+        ) {
+
+            handleMistake(
+                "wrong"
+            );
+
+            return;
+        }
+    }
+
+    /*
+     * Correct complete word.
+     */
+    if (
+        typed === expected
+    ) {
+
+        handleCorrectAnswer();
+
+    }
+}
+
+
+/* =====================================================
+   START GAME
+===================================================== */
+
+function startGame() {
+
+    if (playing) {
+        return;
+    }
+
+    /*
+     * Clear any old timer.
+     */
+    clearWordTimer();
+
+    difficulty =
+        difficultySelect.value;
+
+    if (
+        !DIFFICULTY[difficulty]
+    ) {
+
+        difficulty =
+            "medium";
+
+        difficultySelect.value =
+            "medium";
+    }
+
+    /*
+     * Reset everything.
+     */
+    score = 0;
+    targets = 0;
+    combo = 0;
+    mistakes = 0;
+
+    currentWord = "";
+    lastWord = "";
+
+    wordGeneration = 0;
+    targetLocked = false;
+
+    playing = true;
+
+    /*
+     * Close result.
+     */
+    gameOverModal.classList.remove(
+        "show"
+    );
+
+    /*
+     * Enable input.
+     */
+    input.disabled = false;
+
+    /*
+     * Disable controls.
+     */
+    startButton.disabled = true;
+
+    startButton.textContent =
+        "🎯 Game Running...";
+
+    difficultySelect.disabled =
+        true;
+
+    message.textContent =
+        "⌨️ Type each word before 5 seconds!";
+
+    updateDisplay();
+
+    /*
+     * Start first target.
+     */
+    newTarget();
+}
+
+
+/* =====================================================
+   END GAME
+===================================================== */
+
+function endGame() {
+
+    if (!playing) {
+        return;
+    }
+
+    /*
+     * Stop game.
+     */
+    playing = false;
+
+    /*
+     * Invalidate current target.
+     */
+    wordGeneration++;
+
+    /*
+     * Stop timer.
+     */
+    clearWordTimer();
+
+    targetLocked = true;
+
+    /*
+     * Disable input.
+     */
+    input.disabled = true;
+
+    input.value = "";
+
+    /*
+     * Restore controls.
+     */
+    startButton.disabled = false;
+
+    startButton.textContent =
+        "▶️ Start";
+
+    difficultySelect.disabled =
+        false;
+
+    /*
+     * Reset target animation.
+     */
+    resetTargetClasses();
+
+    target.style.opacity =
+        "1";
+
+    target.textContent =
+        "GAME OVER";
+
+    setTargetFontSize(
+        "GAME OVER"
+    );
+
+    /*
+     * Center target.
+     */
+    target.style.left =
+        "50%";
+
+    target.style.top =
+        "50%";
+
+    target.style.transform =
+        "translate(-50%, -50%)";
+
+    message.textContent =
+        "💥 Game finished.";
+
+    /*
+     * Difficulty name.
+     */
+    const selectedOption =
+        difficultySelect.options[
+            difficultySelect.selectedIndex
+        ];
+
+    const difficultyName =
+        selectedOption
+            ? selectedOption.textContent.trim()
+            : "Medium";
+
+    resultText.textContent =
+        `You hit ${targets} targets, ` +
+        `scored ${score} points, and ` +
+        `made ${mistakes} mistakes on ` +
+        `${difficultyName} difficulty.`;
+
+    updateDisplay();
+
+    /*
+     * Show modal.
+     */
+    gameOverModal.classList.add(
+        "show"
+    );
+
+    playAgainButton.focus();
+}
+
+
+/* =====================================================
+   PLAY AGAIN
+===================================================== */
+
+function playAgain() {
+
+    /*
+     * Close modal first.
+     */
+    gameOverModal.classList.remove(
+        "show"
+    );
+
+    /*
+     * Start fresh.
+     */
+    startGame();
+}
+
+
+/* =====================================================
+   CLOSE RESULT
+===================================================== */
+
+function closeResult() {
+
+    clearWordTimer();
+
+    gameOverModal.classList.remove(
+        "show"
+    );
+
+    message.textContent =
+        "Press Start to play again.";
+
+    target.textContent =
+        "READY";
+
+    setTargetFontSize(
+        "READY"
+    );
+
+    resetTargetClasses();
+
+    target.style.opacity =
+        "1";
+
+    target.style.left =
+        "50%";
+
+    target.style.top =
+        "50%";
+
+    target.style.transform =
+        "translate(-50%, -50%)";
+
+    input.value = "";
+
+    startButton.focus();
+}
+
+
+/* =====================================================
+   DIFFICULTY CHANGE
+===================================================== */
+
+function changeDifficulty() {
+
+    if (playing) {
+        return;
+    }
+
+    difficulty =
+        difficultySelect.value;
+
+    const selectedOption =
+        difficultySelect.options[
+            difficultySelect.selectedIndex
+        ];
+
+    message.textContent =
+        `Difficulty selected: ${
+            selectedOption
+                ? selectedOption.textContent.trim()
+                : "Medium"
+        }`;
+}
+
+
+/* =====================================================
+   BUTTON EVENTS
+===================================================== */
+
+startButton.addEventListener(
+    "click",
+    startGame
+);
+
+
+playAgainButton.addEventListener(
+    "click",
+    playAgain
+);
+
+
+closeResultButton.addEventListener(
+    "click",
+    closeResult
+);
+
+
+difficultySelect.addEventListener(
+    "change",
+    changeDifficulty
+);
+
+
+/* =====================================================
+   LIVE TYPING
+===================================================== */
+
+input.addEventListener(
+    "input",
+    checkInput
+);
+
+
+/* =====================================================
+   ENTER
+===================================================== */
+
+input.addEventListener(
+    "keydown",
+    function (event) {
+
+        if (
+            event.key === "Enter"
+        ) {
+
+            event.preventDefault();
+
+        }
+    }
+);
+
+
+/* =====================================================
+   ESCAPE
+===================================================== */
+
+document.addEventListener(
+    "keydown",
+    function (event) {
+
+        if (
+            event.key === "Escape" &&
+            gameOverModal.classList.contains(
+                "show"
+            )
+        ) {
+
+            closeResult();
+        }
+
+    }
+);
+
+
+/* =====================================================
+   RESIZE
+===================================================== */
+
+window.addEventListener(
+    "resize",
+    function () {
+
+        if (
+            playing &&
+            !targetLocked
+        ) {
+
+            positionTarget();
+        }
+
+    }
+);
+
+
+/* =====================================================
+   INITIALIZE
+===================================================== */
+
+(function initialize() {
+
+    playing = false;
+
+    clearWordTimer();
+
+    difficulty =
+        difficultySelect.value;
+
+    input.disabled = true;
+
+    input.value = "";
+
+    startButton.disabled = false;
+
+    difficultySelect.disabled = false;
+
+    gameOverModal.classList.remove(
+        "show"
+    );
+
+    target.textContent =
+        "READY";
+
+    setTargetFontSize(
+        "READY"
+    );
+
+    target.style.opacity =
+        "1";
+
+    target.style.left =
+        "50%";
+
+    target.style.top =
+        "50%";
+
+    target.style.transform =
+        "translate(-50%, -50%)";
+
+    resetTargetClasses();
+
+    updateDisplay();
+
+})();
+
+</script>
+
+
+</body>
+
+</html>

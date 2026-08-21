@@ -1,0 +1,1853 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <meta
+        name="description"
+        content="Falling Words typing game"
+    >
+
+    <meta
+        name="referrer"
+        content="no-referrer"
+    >
+
+    <title>Falling Words - TypingMaster</title>
+
+    <link
+        rel="stylesheet"
+        href="../css/style.css"
+    >
+
+</head>
+
+
+<body>
+
+
+<!-- =====================================================
+     SHARED SIDEBAR / APP
+===================================================== -->
+
+<div id="app"></div>
+
+
+<!-- =====================================================
+     MAIN CONTENT
+===================================================== -->
+
+<main class="main-content">
+
+
+    <!-- =================================================
+         PAGE HEADER
+    ================================================== -->
+
+    <div class="page-header">
+
+        <h1>📝 Falling Words</h1>
+
+        <p>
+            Type the falling words before they reach the bottom.
+        </p>
+
+    </div>
+
+
+    <!-- =================================================
+         GAME SETTINGS
+    ================================================== -->
+
+    <div class="game-settings">
+
+
+        <!-- DIFFICULTY -->
+
+        <div>
+
+            <label for="difficulty">
+			Difficulty
+            </label>
+
+            <select
+                id="difficulty"
+                class="game-select"
+            >
+
+                <option value="easy">
+                    Easy
+                </option>
+
+                <option
+                    value="medium"
+                    selected
+                >
+                    Medium
+                </option>
+
+                <option value="hard">
+                    Hard
+                </option>
+
+            </select>
+			
+		<label for="timerOption">
+                Timer
+            </label>
+
+            <select
+                id="timerOption"
+                class="game-select"
+            >
+
+                <option value="30">
+                    30 Seconds
+                </option>
+
+                <option
+                    value="60"
+                    selected
+                >
+                    60 Seconds
+                </option>
+
+                <option value="90">
+                    90 Seconds
+                </option>
+
+                <option value="120">
+                    120 Seconds
+                </option>
+
+                <option value="infinite">
+                    ∞ Infinite
+                </option>
+
+            </select>
+
+        </div>
+    </div>
+
+
+    <!-- =================================================
+         SCORE BAR
+    ================================================== -->
+
+    <div class="game-score-bar">
+
+
+        <div>
+
+            <span>Score</span>
+
+            <strong id="score">
+                0
+            </strong>
+
+        </div>
+
+
+        <div>
+
+            <span>Lives</span>
+
+            <strong id="lives">
+                5
+            </strong>
+
+        </div>
+
+
+        <div>
+
+            <span>Time</span>
+
+            <strong id="gameTime">
+                60
+            </strong>
+
+        </div>
+
+
+        <div>
+
+            <span>Level</span>
+
+            <strong id="level">
+                1
+            </strong>
+
+        </div>
+
+
+    </div>
+
+
+    <!-- =================================================
+         GAME AREA
+    ================================================== -->
+
+    <div class="falling-game">
+
+
+        <div
+            id="gameScreen"
+            class="falling-screen"
+            aria-label="Falling words game area"
+        >
+        </div>
+
+
+        <input
+            id="gameInput"
+            class="game-input"
+            type="text"
+            placeholder="Type the falling word..."
+            autocomplete="off"
+            autocapitalize="off"
+            spellcheck="false"
+            maxlength="30"
+            disabled
+        >
+
+
+    </div>
+
+
+    <!-- =================================================
+         CONTROLS
+    ================================================== -->
+
+    <div class="game-controls">
+
+
+        <button
+            id="startGame"
+            class="btn"
+            type="button"
+        >
+            ▶ Start Game
+        </button>
+
+
+        <button
+            id="restartGame"
+            class="btn btn-secondary"
+            type="button"
+        >
+            ↻ Restart
+        </button>
+
+
+        <a
+            href="../games.html"
+            class="game-btn secondary"
+        >
+            ← Back
+        </a>
+
+
+    </div>
+
+
+    <!-- =================================================
+         MESSAGE
+    ================================================== -->
+
+    <p
+        id="gameMessage"
+        class="center muted"
+    >
+        Choose difficulty and timer, then press Start Game.
+    </p>
+
+
+    <!-- =================================================
+         GAME RESULT
+    ================================================== -->
+
+    <div
+        id="gameResult"
+        class="game-result"
+    >
+
+        <h2>
+            🎮 Game Over
+        </h2>
+
+
+        <p id="resultText"></p>
+
+
+        <button
+            id="playAgain"
+            class="game-btn"
+            type="button"
+        >
+            🔄 Play Again
+        </button>
+
+    </div>
+
+
+</main>
+
+
+<!-- =====================================================
+     SHARED JAVASCRIPT
+===================================================== -->
+
+<script src="../js/common.js"></script>
+<script src="../js/app.js"></script>
+<script src="../js/games.js"></script>
+
+
+<script>
+"use strict";
+
+
+/* =====================================================
+   FALLING WORDS
+   --------------------------------
+   Features:
+   - Easy / Medium / Hard
+   - 30 / 60 / 90 / 120 seconds
+   - Infinite mode
+   - Correct bottom collision
+   - No browser history
+   - No localStorage
+   - No sessionStorage
+   - No cookies
+   - No GameStats history
+===================================================== */
+
+
+/* =====================================================
+   DOM ELEMENTS
+===================================================== */
+
+const gameScreen =
+    document.getElementById("gameScreen");
+
+const gameInput =
+    document.getElementById("gameInput");
+
+const startButton =
+    document.getElementById("startGame");
+
+const restartButton =
+    document.getElementById("restartGame");
+
+const playAgainButton =
+    document.getElementById("playAgain");
+
+const scoreElement =
+    document.getElementById("score");
+
+const livesElement =
+    document.getElementById("lives");
+
+const timeElement =
+    document.getElementById("gameTime");
+
+const levelElement =
+    document.getElementById("level");
+
+const messageElement =
+    document.getElementById("gameMessage");
+
+const resultElement =
+    document.getElementById("gameResult");
+
+const resultText =
+    document.getElementById("resultText");
+
+const difficultyElement =
+    document.getElementById("difficulty");
+
+const timerElement =
+    document.getElementById("timerOption");
+
+
+/* =====================================================
+   WORD LIST
+===================================================== */
+
+const words = [
+
+    "apple",
+    "book",
+    "cat",
+    "dog",
+    "home",
+    "tree",
+    "water",
+    "green",
+    "mouse",
+    "light",
+    "happy",
+    "school",
+    "typing",
+    "keyboard",
+    "computer",
+    "practice",
+    "speed",
+    "accuracy",
+    "window",
+    "screen",
+    "planet",
+    "rocket",
+    "orange",
+    "purple",
+    "summer",
+    "winter",
+    "friend",
+    "family",
+    "music",
+    "garden",
+    "coffee",
+    "button",
+    "future",
+    "energy",
+    "player",
+    "master",
+    "challenge",
+    "learning",
+    "creative",
+    "success"
+
+];
+
+
+/* =====================================================
+   DIFFICULTY SETTINGS
+===================================================== */
+
+const difficultySettings = {
+
+    easy: {
+
+        lives: 5,
+
+        fallSpeed: 32,
+
+        spawnInterval: 3000,
+
+        points: 10
+
+    },
+
+
+    medium: {
+
+        lives: 5,
+
+        fallSpeed: 48,
+
+        spawnInterval: 2400,
+
+        points: 15
+
+    },
+
+
+    hard: {
+
+        lives: 3,
+
+        fallSpeed: 68,
+
+        spawnInterval: 1800,
+
+        points: 25
+
+    }
+
+};
+
+
+/* =====================================================
+   TIMER SETTINGS
+===================================================== */
+
+const timerSettings = {
+
+    "30": 30,
+
+    "60": 60,
+
+    "90": 90,
+
+    "120": 120,
+
+    "infinite": Infinity
+
+};
+
+
+/* =====================================================
+   GAME VARIABLES
+===================================================== */
+
+let score = 0;
+
+let lives = 5;
+
+let time = 60;
+
+let level = 1;
+
+let wordsTyped = 0;
+
+let playing = false;
+
+let gameTimer = null;
+
+let spawnTimer = null;
+
+let animationFrame = null;
+
+let fallingWords = [];
+
+let startTime = 0;
+
+let lastFrameTime = 0;
+
+
+/* =====================================================
+   GET DIFFICULTY
+===================================================== */
+
+function getDifficulty() {
+
+    const selected =
+        difficultyElement.value;
+
+
+    return (
+        difficultySettings[selected] ||
+        difficultySettings.medium
+    );
+
+}
+
+
+/* =====================================================
+   GET TIMER
+===================================================== */
+
+function getTimerValue() {
+
+    const selected =
+        timerElement.value;
+
+
+    return (
+        timerSettings[selected] ??
+        60
+    );
+
+}
+
+
+/* =====================================================
+   UPDATE DISPLAY
+===================================================== */
+
+function updateDisplay() {
+
+    scoreElement.textContent =
+        String(score);
+
+
+    livesElement.textContent =
+        String(lives);
+
+
+    levelElement.textContent =
+        String(level);
+
+
+    if (
+        Number.isFinite(time)
+    ) {
+
+        timeElement.textContent =
+            String(Math.max(0, time));
+
+    } else {
+
+        timeElement.textContent =
+            "∞";
+
+    }
+
+}
+
+
+/* =====================================================
+   RANDOM WORD
+===================================================== */
+
+function randomWord() {
+
+    const index =
+        Math.floor(
+            Math.random() * words.length
+        );
+
+
+    return words[index] || "typing";
+
+}
+
+
+/* =====================================================
+   CLEAR GAME TIMERS
+===================================================== */
+
+function clearGameTimers() {
+
+    if (gameTimer !== null) {
+
+        clearInterval(
+            gameTimer
+        );
+
+        gameTimer = null;
+
+    }
+
+
+    if (spawnTimer !== null) {
+
+        clearTimeout(
+            spawnTimer
+        );
+
+        spawnTimer = null;
+
+    }
+
+
+    if (
+        animationFrame !== null
+    ) {
+
+        cancelAnimationFrame(
+            animationFrame
+        );
+
+        animationFrame = null;
+
+    }
+
+}
+
+
+/* =====================================================
+   CLEAR FALLING WORDS
+===================================================== */
+
+function clearFallingWords() {
+
+    fallingWords.forEach(
+        wordObject => {
+
+            if (
+                wordObject.element &&
+                wordObject.element.parentNode
+            ) {
+
+                wordObject.element.remove();
+
+            }
+
+        }
+    );
+
+
+    fallingWords = [];
+
+}
+
+
+/* =====================================================
+   CREATE FALLING WORD
+===================================================== */
+
+function createWord() {
+
+    if (!playing) {
+        return;
+    }
+
+
+    const word =
+        randomWord();
+
+
+    const element =
+        document.createElement("div");
+
+
+    /*
+       Use textContent only.
+       This prevents HTML/script injection.
+    */
+
+    element.textContent =
+        word;
+
+
+    element.className =
+        "falling-word";
+
+
+    /*
+       Make sure the element starts
+       completely inside the game area.
+    */
+
+    const screenWidth =
+        gameScreen.clientWidth;
+
+
+    const elementWidth =
+        Math.max(
+            60,
+            element.offsetWidth || 80
+        );
+
+
+    const maxLeft =
+        Math.max(
+            10,
+            screenWidth -
+            elementWidth -
+            10
+        );
+
+
+    const left =
+        Math.floor(
+            Math.random() *
+            maxLeft
+        );
+
+
+    /*
+       IMPORTANT:
+       Position the word directly with
+       top instead of combining top +
+       transform.
+
+       This makes the bottom collision
+       calculation accurate.
+    */
+
+    const startY = -40;
+
+
+    element.style.left =
+        `${left}px`;
+
+
+    element.style.top =
+        `${startY}px`;
+
+
+    gameScreen.appendChild(
+        element
+    );
+
+
+    const difficulty =
+        getDifficulty();
+
+
+    const gameWord = {
+
+        text: word,
+
+        element: element,
+
+        x: left,
+
+        y: startY,
+
+        speed: difficulty.fallSpeed
+
+    };
+
+
+    fallingWords.push(
+        gameWord
+    );
+
+}
+
+
+/* =====================================================
+   REMOVE WORD
+===================================================== */
+
+function removeWord(
+    wordObject
+) {
+
+    if (!wordObject) {
+        return;
+    }
+
+
+    if (
+        wordObject.element &&
+        wordObject.element.parentNode
+    ) {
+
+        wordObject.element.remove();
+
+    }
+
+
+    const index =
+        fallingWords.indexOf(
+            wordObject
+        );
+
+
+    if (index !== -1) {
+
+        fallingWords.splice(
+            index,
+            1
+        );
+
+    }
+
+}
+
+
+/* =====================================================
+   MISS WORD
+===================================================== */
+
+function missWord(
+    wordObject
+) {
+
+    if (!playing) {
+        return;
+    }
+
+
+    removeWord(
+        wordObject
+    );
+
+
+    lives--;
+
+
+    updateDisplay();
+
+
+    messageElement.textContent =
+        "⚠️ Missed word!";
+
+
+    if (
+        lives <= 0
+    ) {
+
+        endGame(
+            "lives"
+        );
+
+    }
+
+}
+
+
+/* =====================================================
+   CALCULATE LEVEL
+===================================================== */
+
+function updateLevel() {
+
+    /*
+       Every 10 correctly typed words
+       increases the level.
+
+       Maximum level keeps the game
+       playable for long sessions.
+    */
+
+    level =
+        Math.min(
+            10,
+            Math.floor(
+                wordsTyped / 10
+            ) + 1
+        );
+
+}
+
+
+/* =====================================================
+   GET CURRENT FALL SPEED
+===================================================== */
+
+function getCurrentFallSpeed() {
+
+    const settings =
+        getDifficulty();
+
+
+    /*
+       Increase speed gradually with level.
+    */
+
+    const levelBonus =
+        (level - 1) * 5;
+
+
+    return Math.min(
+        settings.fallSpeed +
+        levelBonus,
+        120
+    );
+
+}
+
+
+/* =====================================================
+   GET CURRENT SPAWN INTERVAL
+===================================================== */
+
+function getCurrentSpawnInterval() {
+
+    const settings =
+        getDifficulty();
+
+
+    /*
+       Faster spawning at higher levels.
+    */
+
+    const reduction =
+        (level - 1) * 150;
+
+
+    return Math.max(
+        900,
+        settings.spawnInterval -
+        reduction
+    );
+
+}
+
+
+/* =====================================================
+   GAME LOOP
+===================================================== */
+
+function gameLoop(
+    timestamp
+) {
+
+    if (!playing) {
+        return;
+    }
+
+
+    if (!lastFrameTime) {
+
+        lastFrameTime =
+            timestamp;
+
+    }
+
+
+    /*
+       Convert milliseconds to seconds.
+    */
+
+    const delta =
+        Math.min(
+            0.05,
+            (
+                timestamp -
+                lastFrameTime
+            ) / 1000
+        );
+
+
+    lastFrameTime =
+        timestamp;
+
+
+    const currentSpeed =
+        getCurrentFallSpeed();
+
+
+    /*
+       Iterate backwards because
+       words can be removed during loop.
+    */
+
+    for (
+        let i =
+            fallingWords.length - 1;
+
+        i >= 0;
+
+        i--
+    ) {
+
+        const wordObject =
+            fallingWords[i];
+
+
+        if (
+            !wordObject ||
+            !wordObject.element
+        ) {
+
+            continue;
+
+        }
+
+
+        /*
+           Gradually adjust existing
+           word speed toward current level.
+        */
+
+        wordObject.speed +=
+            (
+                currentSpeed -
+                wordObject.speed
+            ) * 0.015;
+
+
+        /*
+           Move word downward.
+        */
+
+        wordObject.y +=
+            wordObject.speed *
+            delta;
+
+
+        /*
+           IMPORTANT:
+           Directly update TOP.
+
+           No transform is used here.
+        */
+
+        wordObject.element.style.top =
+            `${wordObject.y}px`;
+
+
+        /*
+           Get actual word height.
+        */
+
+        const wordHeight =
+            wordObject.element.offsetHeight;
+
+
+        /*
+           Bottom position of word.
+        */
+
+        const bottom =
+            wordObject.y +
+            wordHeight;
+
+
+        /*
+           When the BOTTOM of the word
+           reaches the bottom border,
+           remove it and lose one life.
+        */
+
+        if (
+            bottom >=
+            gameScreen.clientHeight
+        ) {
+
+            missWord(
+                wordObject
+            );
+
+        }
+
+    }
+
+
+    animationFrame =
+        requestAnimationFrame(
+            gameLoop
+        );
+
+}
+
+
+/* =====================================================
+   SPAWN LOOP
+===================================================== */
+
+function startSpawnLoop() {
+
+    if (!playing) {
+        return;
+    }
+
+
+    createWord();
+
+
+    const interval =
+        getCurrentSpawnInterval();
+
+
+    spawnTimer =
+        setTimeout(
+            () => {
+
+                if (playing) {
+
+                    startSpawnLoop();
+
+                }
+
+            },
+            interval
+        );
+
+}
+
+
+/* =====================================================
+   START TIMER
+===================================================== */
+
+function startTimer() {
+
+    clearInterval(
+        gameTimer
+    );
+
+
+    const selectedTimer =
+        timerElement.value;
+
+
+    /*
+       Infinite mode.
+    */
+
+    if (
+        selectedTimer ===
+        "infinite"
+    ) {
+
+        time =
+            Infinity;
+
+
+        updateDisplay();
+
+        return;
+
+    }
+
+
+    /*
+       Finite timer.
+    */
+
+    time =
+        getTimerValue();
+
+
+    updateDisplay();
+
+
+    gameTimer =
+        setInterval(
+            () => {
+
+                if (!playing) {
+                    return;
+                }
+
+
+                time--;
+
+
+                updateDisplay();
+
+
+                if (
+                    time <= 0
+                ) {
+
+                    time = 0;
+
+                    updateDisplay();
+
+                    endGame(
+                        "time"
+                    );
+
+                }
+
+            },
+            1000
+        );
+
+}
+
+
+/* =====================================================
+   START GAME
+===================================================== */
+
+function startGame() {
+
+    /*
+       Prevent duplicate games.
+    */
+
+    if (playing) {
+        return;
+    }
+
+
+    clearGameTimers();
+
+    clearFallingWords();
+
+
+    const settings =
+        getDifficulty();
+
+
+    score = 0;
+
+    lives =
+        settings.lives;
+
+    wordsTyped = 0;
+
+    level = 1;
+
+    time =
+        getTimerValue();
+
+
+    playing = true;
+
+
+    startTime =
+        Date.now();
+
+
+    lastFrameTime =
+        0;
+
+
+    gameInput.disabled =
+        false;
+
+
+    gameInput.value =
+        "";
+
+
+    resultElement.classList.remove(
+        "show"
+    );
+
+
+    startButton.disabled =
+        true;
+
+
+    restartButton.disabled =
+        false;
+
+
+    difficultyElement.disabled =
+        true;
+
+
+    timerElement.disabled =
+        true;
+
+
+    startButton.textContent =
+        "🎮 Game Running";
+
+
+    messageElement.textContent =
+        "⌨️ Type the falling words!";
+
+
+    updateDisplay();
+
+
+    /*
+       Start countdown.
+    */
+
+    startTimer();
+
+
+    /*
+       Start spawning.
+    */
+
+    startSpawnLoop();
+
+
+    /*
+       Start animation.
+    */
+
+    animationFrame =
+        requestAnimationFrame(
+            gameLoop
+        );
+
+
+    gameInput.focus();
+
+}
+
+
+/* =====================================================
+   CHECK ANSWER
+===================================================== */
+
+function checkAnswer() {
+
+    if (!playing) {
+        return;
+    }
+
+
+    const typed =
+        gameInput.value
+            .trim()
+            .toLowerCase();
+
+
+    if (!typed) {
+        return;
+    }
+
+
+    /*
+       Find exact matching word.
+    */
+
+    const index =
+        fallingWords.findIndex(
+            wordObject =>
+                wordObject.text
+                    .toLowerCase() ===
+                typed
+        );
+
+
+    if (index === -1) {
+        return;
+    }
+
+
+    const wordObject =
+        fallingWords[index];
+
+
+    /*
+       Remove matched word.
+    */
+
+    removeWord(
+        wordObject
+    );
+
+
+    const settings =
+        getDifficulty();
+
+
+    /*
+       Score is based on difficulty
+       and current level.
+    */
+
+    const points =
+        settings.points +
+        (
+            (level - 1) * 3
+        );
+
+
+    score +=
+        points;
+
+
+    wordsTyped++;
+
+
+    updateLevel();
+
+
+    updateDisplay();
+
+
+    messageElement.textContent =
+        `✓ +${points} points`;
+
+
+    gameInput.value =
+        "";
+
+
+    gameInput.focus();
+
+}
+
+
+/* =====================================================
+   END GAME
+===================================================== */
+
+function endGame(
+    reason
+) {
+
+    if (!playing) {
+        return;
+    }
+
+
+    playing = false;
+
+
+    clearGameTimers();
+
+
+    clearFallingWords();
+
+
+    gameInput.disabled =
+        true;
+
+
+    startButton.disabled =
+        false;
+
+
+    restartButton.disabled =
+        false;
+
+
+    difficultyElement.disabled =
+        false;
+
+
+    timerElement.disabled =
+        false;
+
+
+    startButton.textContent =
+        "▶ Start Game";
+
+
+    if (
+        reason === "time"
+    ) {
+
+        messageElement.textContent =
+            "⏰ Time's up!";
+
+    }
+
+    else {
+
+        messageElement.textContent =
+            "💔 All lives lost!";
+
+    }
+
+
+    const difficultyName =
+        difficultyElement
+            .options[
+                difficultyElement
+                    .selectedIndex
+            ]
+            .textContent
+            .trim();
+
+
+    const timerName =
+        timerElement
+            .options[
+                timerElement
+                    .selectedIndex
+            ]
+            .textContent
+            .trim();
+
+
+    resultText.textContent =
+        `You scored ${score} points, ` +
+        `typed ${wordsTyped} words, ` +
+        `reached level ${level}, ` +
+        `on ${difficultyName} difficulty ` +
+        `with ${timerName} timer.`;
+
+
+    resultElement.classList.add(
+        "show"
+    );
+
+}
+
+
+/* =====================================================
+   RESTART GAME
+===================================================== */
+
+function restartGame() {
+
+    /*
+       If a game is currently running,
+       stop it cleanly first.
+    */
+
+    if (playing) {
+
+        playing = false;
+
+        clearGameTimers();
+
+        clearFallingWords();
+
+    }
+
+
+    resultElement.classList.remove(
+        "show"
+    );
+
+
+    startGame();
+
+}
+
+
+/* =====================================================
+   DIFFICULTY CHANGE
+===================================================== */
+
+difficultyElement.addEventListener(
+    "change",
+    () => {
+
+        if (playing) {
+            return;
+        }
+
+
+        const settings =
+            getDifficulty();
+
+
+        /*
+           Show selected difficulty's
+           starting lives.
+        */
+
+        lives =
+            settings.lives;
+
+
+        updateDisplay();
+
+    }
+);
+
+
+/* =====================================================
+   TIMER CHANGE
+===================================================== */
+
+timerElement.addEventListener(
+    "change",
+    () => {
+
+        if (playing) {
+            return;
+        }
+
+
+        time =
+            getTimerValue();
+
+
+        updateDisplay();
+
+    }
+);
+
+
+/* =====================================================
+   START BUTTON
+===================================================== */
+
+startButton.addEventListener(
+    "click",
+    startGame
+);
+
+
+/* =====================================================
+   RESTART BUTTON
+===================================================== */
+
+restartButton.addEventListener(
+    "click",
+    restartGame
+);
+
+
+/* =====================================================
+   PLAY AGAIN
+===================================================== */
+
+playAgainButton.addEventListener(
+    "click",
+    () => {
+
+        resultElement.classList.remove(
+            "show"
+        );
+
+
+        startGame();
+
+    }
+);
+
+
+/* =====================================================
+   INPUT
+===================================================== */
+
+gameInput.addEventListener(
+    "input",
+    checkAnswer
+);
+
+
+/* =====================================================
+   ENTER KEY
+===================================================== */
+
+gameInput.addEventListener(
+    "keydown",
+    event => {
+
+        if (
+            event.key === "Enter"
+        ) {
+
+            event.preventDefault();
+
+        }
+
+    }
+);
+
+
+/* =====================================================
+   WINDOW RESIZE
+===================================================== */
+
+window.addEventListener(
+    "resize",
+    () => {
+
+        /*
+           Keep existing words inside the
+           visible horizontal game area.
+        */
+
+        if (!playing) {
+            return;
+        }
+
+
+        const screenWidth =
+            gameScreen.clientWidth;
+
+
+        fallingWords.forEach(
+            wordObject => {
+
+                if (
+                    !wordObject.element
+                ) {
+                    return;
+                }
+
+
+                const wordWidth =
+                    wordObject.element
+                        .offsetWidth || 80;
+
+
+                const maxLeft =
+                    Math.max(
+                        10,
+                        screenWidth -
+                        wordWidth -
+                        10
+                    );
+
+
+                wordObject.x =
+                    Math.min(
+                        wordObject.x,
+                        maxLeft
+                    );
+
+
+                wordObject.element.style.left =
+                    `${wordObject.x}px`;
+
+            }
+        );
+
+    }
+);
+
+
+/* =====================================================
+   PAGE VISIBILITY
+===================================================== */
+
+document.addEventListener(
+    "visibilitychange",
+    () => {
+
+        /*
+           Do not allow the game to continue
+           moving while the browser tab is hidden.
+           The game is stopped safely instead.
+        */
+
+        if (
+            document.hidden &&
+            playing
+        ) {
+
+            endGame(
+                "time"
+            );
+
+        }
+
+    }
+);
+
+
+/* =====================================================
+   INITIAL STATE
+===================================================== */
+
+(function initializeGame() {
+
+    clearGameTimers();
+
+    clearFallingWords();
+
+
+    playing = false;
+
+
+    score = 0;
+
+    level = 1;
+
+    wordsTyped = 0;
+
+
+    const settings =
+        getDifficulty();
+
+
+    lives =
+        settings.lives;
+
+
+    time =
+        getTimerValue();
+
+
+    gameInput.disabled =
+        true;
+
+
+    startButton.disabled =
+        false;
+
+
+    restartButton.disabled =
+        false;
+
+
+    difficultyElement.disabled =
+        false;
+
+
+    timerElement.disabled =
+        false;
+
+
+    resultElement.classList.remove(
+        "show"
+    );
+
+
+    messageElement.textContent =
+        "Choose difficulty and timer, then press Start Game.";
+
+
+    updateDisplay();
+
+})();
+</script>
+
+
+</body>
+
+</html>

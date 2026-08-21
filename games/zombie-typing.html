@@ -1,0 +1,999 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+<meta charset="UTF-8">
+
+<meta name="viewport"
+content="width=device-width, initial-scale=1.0">
+
+<title>Zombie Typing - Typing Master</title>
+
+<link rel="stylesheet"
+href="../css/style.css">
+
+</head>
+
+
+<body>
+
+
+<div id="app"></div>
+
+
+<main class="main-content">
+
+
+<div class="page-header">
+
+    <h1>🧟 Zombie Typing</h1>
+
+    <p>
+        Type the zombie words before they reach you.
+    </p>
+
+</div>
+
+
+<div class="game-container">
+
+<div class="game-panel">
+
+
+<!-- =========================================
+     GAME STATS
+========================================= -->
+
+<div class="game-top">
+
+    <div class="game-stat">
+
+        <small>Score</small>
+
+        <strong id="score">
+            0
+        </strong>
+
+    </div>
+
+
+    <div class="game-stat">
+
+        <small>Lives</small>
+
+        <strong id="lives">
+            3
+        </strong>
+
+    </div>
+
+
+    <div class="game-stat">
+
+        <small>Wave</small>
+
+        <strong id="wave">
+            1
+        </strong>
+
+    </div>
+
+
+    <div class="game-stat">
+
+        <small>Kills</small>
+
+        <strong id="kills">
+            0
+        </strong>
+
+    </div>
+
+
+    <div class="game-stat">
+
+        <small>Combo</small>
+
+        <strong id="combo">
+            0
+        </strong>
+
+    </div>
+
+</div>
+
+
+<!-- =========================================
+     ZOMBIE AREA
+========================================= -->
+
+<div
+    id="zombieArea"
+    style="
+        position:relative;
+        min-height:300px;
+        margin:25px 0;
+        padding:30px 20px;
+        border-radius:18px;
+        overflow:hidden;
+        background:
+            linear-gradient(
+                180deg,
+                #07130d 0%,
+                #10251a 55%,
+                #182c1d 100%
+            );
+        display:flex;
+        flex-direction:column;
+        align-items:center;
+        justify-content:center;
+        text-align:center;
+    "
+>
+
+
+    <!-- Background decoration -->
+
+    <div style="
+        position:absolute;
+        left:0;
+        right:0;
+        bottom:0;
+        height:55px;
+        background:#132019;
+        border-top:3px solid #27382b;
+    ">
+    </div>
+
+
+    <!-- Zombie -->
+
+    <div
+        id="zombie"
+        style="
+            position:relative;
+            z-index:2;
+            font-size:72px;
+            transition:
+                transform .2s ease,
+                filter .2s ease;
+        "
+    >
+        🧟
+    </div>
+
+
+    <!-- Zombie word -->
+
+    <div
+        id="word"
+        style="
+            position:relative;
+            z-index:2;
+            margin-top:10px;
+            min-height:38px;
+            font-size:28px;
+            font-weight:800;
+            color:#ffffff;
+            letter-spacing:1px;
+        "
+    >
+        Click Start Survival
+    </div>
+
+
+    <!-- Attack progress -->
+
+    <div style="
+        position:relative;
+        z-index:2;
+        width:min(500px,90%);
+        margin-top:25px;
+    ">
+
+        <div style="
+            display:flex;
+            justify-content:space-between;
+            color:#d1d5db;
+            font-size:13px;
+            margin-bottom:7px;
+        ">
+
+            <span>Zombie Attack</span>
+
+            <span id="attackText">
+                0%
+            </span>
+
+        </div>
+
+
+        <div style="
+            height:12px;
+            background:#374151;
+            border-radius:20px;
+            overflow:hidden;
+        ">
+
+            <div
+                id="attackBar"
+                style="
+                    width:0%;
+                    height:100%;
+                    background:#ef4444;
+                    border-radius:20px;
+                    transition:width .15s linear;
+                "
+            >
+            </div>
+
+        </div>
+
+    </div>
+
+
+</div>
+
+
+<!-- =========================================
+     INPUT
+========================================= -->
+
+<input
+    id="input"
+    class="game-input"
+    type="text"
+    placeholder="Type the zombie word..."
+    autocomplete="off"
+    spellcheck="false"
+    disabled
+>
+
+
+<!-- =========================================
+     BUTTONS
+========================================= -->
+
+<div class="game-buttons">
+
+    <button
+        class="game-btn"
+        id="start"
+        type="button"
+    >
+        🧟 Start Survival
+    </button>
+
+
+    <a
+        href="../games.html"
+        class="game-btn secondary"
+    >
+        Back
+    </a>
+
+</div>
+
+
+<!-- =========================================
+     RESULT
+========================================= -->
+
+<div
+    class="game-result"
+    id="result"
+>
+
+    <h2 id="resultTitle">
+        ☠️ You Were Overrun!
+    </h2>
+
+
+    <p id="resultText">
+    </p>
+
+
+    <button
+        class="game-btn"
+        id="again"
+        type="button"
+    >
+        🔄 Try Again
+    </button>
+
+</div>
+
+
+</div>
+
+</div>
+
+
+</main>
+
+
+<script src="../js/common.js"></script>
+
+<script src="../js/app.js"></script>
+
+<script src="../js/games.js"></script>
+
+
+<script>
+
+
+/* =====================================================
+   GAME VARIABLES
+===================================================== */
+
+let score = 0;
+
+let lives = 3;
+
+let wave = 1;
+
+let kills = 0;
+
+let combo = 0;
+
+let current = "";
+
+let playing = false;
+
+
+/*
+    Zombie attack system.
+
+    The zombie starts slowly.
+    Each successful kill gradually
+    makes the next zombie faster.
+*/
+
+let attackProgress = 0;
+
+let attackSpeed = 0.7;
+
+let gameTimer = null;
+
+let attackTimer = null;
+
+
+/* =====================================================
+   ELEMENTS
+===================================================== */
+
+const word =
+    document.getElementById("word");
+
+const input =
+    document.getElementById("input");
+
+const zombie =
+    document.getElementById("zombie");
+
+const attackBar =
+    document.getElementById("attackBar");
+
+const attackText =
+    document.getElementById("attackText");
+
+const startButton =
+    document.getElementById("start");
+
+const againButton =
+    document.getElementById("again");
+
+const result =
+    document.getElementById("result");
+
+
+/* =====================================================
+   ZOMBIE WORDS
+===================================================== */
+
+const zombieWords = [
+
+    "zombie",
+    "grave",
+    "bones",
+    "skull",
+    "darkness",
+    "shadow",
+    "monster",
+    "danger",
+    "night",
+    "blood",
+    "haunted",
+    "graveyard",
+    "creature",
+    "walking",
+    "dead",
+    "horror",
+    "scream",
+    "attack",
+    "survive",
+    "escape",
+    "fear",
+    "ghost",
+    "spooky",
+    "undead",
+    "infection",
+    "poison",
+    "dangerous",
+    "nightmare",
+    "hunter",
+    "survivor",
+    "apocalypse",
+    "battle",
+    "defense",
+    "warning",
+    "dark",
+    "evil",
+    "monster",
+    "rotting",
+    "forest",
+    "cursed",
+    "crypt",
+    "vampire",
+    "werewolf",
+    "skeleton",
+    "tomb",
+    "grave",
+    "mist",
+    "moonlight",
+    "attack",
+    "survival"
+
+];
+
+
+/* =====================================================
+   RANDOM WORD
+===================================================== */
+
+function getRandomWord() {
+
+    return zombieWords[
+        Math.floor(
+            Math.random() *
+            zombieWords.length
+        )
+    ];
+
+}
+
+
+/* =====================================================
+   NEXT ZOMBIE
+===================================================== */
+
+function nextZombie() {
+
+    current =
+        getRandomWord();
+
+
+    word.textContent =
+        current;
+
+
+    input.value = "";
+
+    input.focus();
+
+
+    /*
+        Reset attack progress.
+    */
+
+    attackProgress = 0;
+
+
+    updateAttack();
+
+
+    /*
+        Small visual reset.
+    */
+
+    zombie.style.transform =
+        "scale(1)";
+
+
+    zombie.style.filter =
+        "none";
+
+}
+
+
+/* =====================================================
+   UPDATE STATS
+===================================================== */
+
+function updateStats() {
+
+    document.getElementById("score")
+        .textContent =
+        score;
+
+
+    document.getElementById("lives")
+        .textContent =
+        lives;
+
+
+    document.getElementById("wave")
+        .textContent =
+        wave;
+
+
+    document.getElementById("kills")
+        .textContent =
+        kills;
+
+
+    document.getElementById("combo")
+        .textContent =
+        combo;
+
+}
+
+
+/* =====================================================
+   UPDATE ATTACK BAR
+===================================================== */
+
+function updateAttack() {
+
+    attackProgress =
+        Math.max(
+            0,
+            Math.min(
+                100,
+                attackProgress
+            )
+        );
+
+
+    attackBar.style.width =
+        attackProgress + "%";
+
+
+    attackText.textContent =
+        Math.round(
+            attackProgress
+        ) + "%";
+
+
+    /*
+        Make zombie appear closer
+        as attack increases.
+    */
+
+    const scale =
+        1 +
+        (attackProgress / 100) * 0.35;
+
+
+    zombie.style.transform =
+        `scale(${scale})`;
+
+
+    /*
+        Make zombie more dangerous
+        near the end.
+    */
+
+    if (attackProgress >= 75) {
+
+        zombie.style.filter =
+            "drop-shadow(0 0 15px #ef4444)";
+
+    }
+
+    else {
+
+        zombie.style.filter =
+            "none";
+
+    }
+
+}
+
+
+/* =====================================================
+   START GAME
+===================================================== */
+
+function start() {
+
+    /*
+        Stop old timers.
+    */
+
+    clearInterval(attackTimer);
+
+    clearInterval(gameTimer);
+
+
+    /*
+        Reset game.
+    */
+
+    score = 0;
+
+    lives = 3;
+
+    wave = 1;
+
+    kills = 0;
+
+    combo = 0;
+
+    attackProgress = 0;
+
+
+    /*
+        Slow starting speed.
+    */
+
+    attackSpeed = 0.7;
+
+
+    playing = true;
+
+
+    input.disabled = false;
+
+
+    result.classList.remove(
+        "show"
+    );
+
+
+    startButton.disabled = true;
+
+    startButton.textContent =
+        "🧟 Surviving...";
+
+
+    nextZombie();
+
+    updateStats();
+
+
+    /*
+        Zombie attack updates
+        every 100 milliseconds.
+    */
+
+    attackTimer =
+        setInterval(
+            updateZombieAttack,
+            100
+        );
+
+}
+
+
+/* =====================================================
+   ZOMBIE ATTACK
+===================================================== */
+
+function updateZombieAttack() {
+
+    if (!playing)
+        return;
+
+
+    /*
+        Increase attack progress
+        gradually.
+    */
+
+    attackProgress +=
+        attackSpeed;
+
+
+    updateAttack();
+
+
+    /*
+        Zombie reaches player.
+    */
+
+    if (
+        attackProgress >= 100
+    ) {
+
+        zombieReachedPlayer();
+
+    }
+
+}
+
+
+/* =====================================================
+   ZOMBIE REACHED PLAYER
+===================================================== */
+
+function zombieReachedPlayer() {
+
+    if (!playing)
+        return;
+
+
+    lives--;
+
+    combo = 0;
+
+
+    /*
+        Zombie attack becomes slightly
+        faster after losing a life.
+    */
+
+    attackSpeed += 0.04;
+
+
+    updateStats();
+
+
+    /*
+        Game over.
+    */
+
+    if (lives <= 0) {
+
+        endGame();
+
+        return;
+
+    }
+
+
+    /*
+        New zombie arrives.
+    */
+
+    nextZombie();
+
+}
+
+
+/* =====================================================
+   PLAYER DEFEATS ZOMBIE
+===================================================== */
+
+function defeatZombie() {
+
+    kills++;
+
+    combo++;
+
+
+    /*
+        Score increases with wave
+        and combo.
+    */
+
+    const points =
+        10 +
+        (wave * 3) +
+        (combo * 2);
+
+
+    score += points;
+
+
+    /*
+        Every 8 kills increases wave.
+    */
+
+    if (
+        kills % 8 === 0
+    ) {
+
+        wave++;
+
+
+        /*
+            Increase attack speed
+            gradually.
+
+            It never becomes
+            impossibly fast.
+        */
+
+        attackSpeed =
+            Math.min(
+                1.8,
+                attackSpeed + 0.12
+            );
+
+    }
+
+
+    updateStats();
+
+
+    /*
+        Small zombie defeat animation.
+    */
+
+    zombie.style.transform =
+        "scale(1.35) rotate(8deg)";
+
+
+    setTimeout(
+        () => {
+
+            if (playing) {
+
+                nextZombie();
+
+            }
+
+        },
+        120
+    );
+
+}
+
+
+/* =====================================================
+   INPUT CHECK
+===================================================== */
+
+input.addEventListener(
+    "input",
+    () => {
+
+        if (!playing)
+            return;
+
+
+        const typed =
+            input.value
+                .trim()
+                .toLowerCase();
+
+
+        /*
+            Correct word.
+        */
+
+        if (
+            typed ===
+            current.toLowerCase()
+        ) {
+
+            defeatZombie();
+
+        }
+
+    }
+);
+
+
+/* =====================================================
+   END GAME
+===================================================== */
+
+function endGame() {
+
+    if (!playing)
+        return;
+
+
+    playing = false;
+
+
+    clearInterval(
+        attackTimer
+    );
+
+
+    clearInterval(
+        gameTimer
+    );
+
+
+    input.disabled = true;
+
+
+    startButton.disabled =
+        false;
+
+
+    startButton.textContent =
+        "🧟 Start Survival";
+
+
+    word.textContent =
+        "☠️ GAME OVER";
+
+
+    attackProgress = 100;
+
+    updateAttack();
+
+
+    result.classList.add(
+        "show"
+    );
+
+
+    document.getElementById(
+        "resultTitle"
+    ).textContent =
+        "☠️ You Were Overrun!";
+
+
+    document.getElementById(
+        "resultText"
+    ).textContent =
+        `You defeated ${kills} zombies, reached wave ${wave}, and scored ${score} points.`;
+
+
+    /*
+        Save game result.
+    */
+
+    if (
+        typeof GameStats !== "undefined" &&
+        typeof GameStats.addGame === "function"
+    ) {
+
+        GameStats.addGame(
+            score,
+            0,
+            100
+        );
+
+    }
+
+}
+
+
+/* =====================================================
+   START BUTTON
+===================================================== */
+
+startButton.addEventListener(
+    "click",
+    start
+);
+
+
+/* =====================================================
+   TRY AGAIN
+===================================================== */
+
+againButton.addEventListener(
+    "click",
+    start
+);
+
+
+/* =====================================================
+   INITIAL STATE
+===================================================== */
+
+input.disabled = true;
+
+word.textContent =
+    "Click Start Survival";
+
+updateStats();
+
+updateAttack();
+
+
+</script>
+
+
+</body>
+
+</html>

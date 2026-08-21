@@ -1,0 +1,1393 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="Type Racer typing game">
+<meta name="referrer" content="no-referrer">
+
+<title>Type Racer - Typing Master</title>
+
+<link rel="stylesheet" href="../css/style.css">
+</head>
+
+<body>
+
+<div id="app"></div>
+
+<main class="main-content">
+
+    <div class="page-header">
+        <h1>🏎️ Type Racer</h1>
+        <p>Type the passage as quickly and accurately as possible.</p>
+    </div>
+
+
+    <div class="game-container">
+        <div class="game-panel">
+
+
+            <!-- =====================================================
+                 DIFFICULTY
+            ====================================================== -->
+
+            <div class="game-settings">
+
+                <label for="difficulty">
+                    Difficulty
+                </label>
+
+                <select
+                    id="difficulty"
+                    class="game-select">
+
+                    <option value="easy">
+                        🟢 Easy
+                    </option>
+
+                    <option value="medium" selected>
+                        🟡 Medium
+                    </option>
+
+                    <option value="hard">
+                        🔴 Hard
+                    </option>
+
+                </select>
+
+            </div>
+
+
+            <!-- =====================================================
+                 GAME STATS
+            ====================================================== -->
+
+            <div class="game-top">
+
+                <div class="game-stat">
+                    <small>WPM</small>
+                    <strong id="wpm">0</strong>
+                </div>
+
+                <div class="game-stat">
+                    <small>Accuracy</small>
+                    <strong id="accuracy">100%</strong>
+                </div>
+
+                <div class="game-stat">
+                    <small>Time</small>
+                    <strong id="time">60</strong>
+                </div>
+
+                <div class="game-stat">
+                    <small>Progress</small>
+                    <strong id="progress">0%</strong>
+                </div>
+
+            </div>
+
+
+            <!-- =====================================================
+                 PASSAGE
+            ====================================================== -->
+
+            <div
+                id="passage"
+                class="type-racer-passage"
+                aria-live="polite">
+
+                Click Start Race to begin.
+
+            </div>
+
+
+            <!-- =====================================================
+                 TYPING INPUT
+            ====================================================== -->
+
+            <textarea
+                id="input"
+                class="game-input"
+                rows="5"
+                placeholder="Start typing the passage..."
+                disabled
+                autocomplete="off"
+                autocapitalize="off"
+                spellcheck="false"
+                aria-label="Type the displayed passage">
+            </textarea>
+
+
+            <!-- =====================================================
+                 BUTTONS
+            ====================================================== -->
+
+            <div class="game-buttons">
+
+                <button
+                    type="button"
+                    class="game-btn"
+                    id="start">
+
+                    🏁 Start Race
+
+                </button>
+
+
+                <a
+                    href="../games.html"
+                    class="game-btn secondary">
+
+                    ← Back
+
+                </a>
+
+            </div>
+
+
+        </div>
+    </div>
+
+
+    <!-- =====================================================
+         CENTER RESULT POPUP
+    ====================================================== -->
+
+    <div
+        id="result"
+        class="type-racer-overlay"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="resultTitle"
+        aria-describedby="resultText">
+
+        <div class="type-racer-result">
+
+            <h2 id="resultTitle">
+                🏁 Race Finished!
+            </h2>
+
+            <p id="resultText"></p>
+
+            <button
+                type="button"
+                class="game-btn"
+                id="raceAgain">
+
+                🔄 Race Again
+
+            </button>
+
+        </div>
+
+    </div>
+
+
+</main>
+
+
+<!-- =========================================================
+     SHARED JAVASCRIPT
+========================================================= -->
+
+<script src="../js/common.js"></script>
+<script src="../js/app.js"></script>
+<script src="../js/games.js"></script>
+
+
+<script>
+"use strict";
+
+
+/* =========================================================
+   PASSAGES
+========================================================= */
+
+const passages = [
+
+    "Typing is a skill that becomes easier with regular practice. Keep your fingers relaxed and focus on accuracy before trying to type faster.",
+
+    "Technology has changed the way people communicate, work, study, and create. Learning to type efficiently can save valuable time every day.",
+
+    "Successful typing requires patience, concentration, rhythm, and practice. The more consistently you practice, the more natural typing becomes.",
+
+    "Every great skill starts with small improvements. Practice every day, maintain good posture, and gradually increase your typing speed.",
+
+    "Computers are powerful tools for learning and creativity. Good typing skills allow you to communicate your ideas quickly and comfortably.",
+
+    "A calm and steady typing rhythm can help you avoid unnecessary mistakes. Focus on each word and let your fingers move naturally across the keyboard.",
+
+    "Good typing habits are built through repetition and patience. Sit comfortably, keep your hands in the correct position, and practice with purpose.",
+
+    "Improving your typing speed does not happen overnight. Regular practice helps your fingers remember common words and makes typing feel more automatic.",
+
+    "The keyboard becomes easier to use when you stop looking at every key. Trust your fingers, concentrate on the screen, and allow your typing skills to grow.",
+
+    "Accuracy is one of the most important parts of good typing. A fast typist who makes many mistakes may need more time to correct them later.",
+
+    "Daily practice can make a noticeable difference in your typing performance. Even a few minutes of focused practice can help improve speed and confidence.",
+
+    "When learning to type, it is better to develop good habits than to rush for a high score. Speed will naturally improve as your accuracy becomes stronger.",
+
+    "Typing can become comfortable and effortless when you practice regularly. Try to maintain a consistent rhythm instead of stopping after every word.",
+
+    "A good typing session should be focused but relaxed. Keep your shoulders comfortable, sit upright, and avoid pressing the keys harder than necessary.",
+
+    "Learning to type quickly can make many computer tasks easier. Writing messages, completing assignments, creating documents, and searching for information all become faster.",
+
+    "Mistakes are a normal part of learning any new skill. Instead of becoming frustrated, notice your common errors and use them as opportunities to improve.",
+
+    "Strong typing skills can help students complete their work more efficiently. With regular practice, writing notes and preparing assignments can become much easier.",
+
+    "The best way to improve your typing is to practice consistently. Short sessions repeated throughout the week are often more useful than one long session.",
+
+    "Your typing speed will improve when your fingers become familiar with the keyboard. Give yourself time to develop muscle memory and avoid rushing.",
+
+    "Typing practice can also improve concentration and coordination. As you become more comfortable with the keyboard, you can focus more on your ideas.",
+
+    "A comfortable workspace can make typing practice more enjoyable. Keep your keyboard at a natural height and make sure your wrists and hands can move freely.",
+
+    "Set a small goal for every typing session. You might focus on accuracy, speed, difficult words, or maintaining a steady rhythm from beginning to end.",
+
+    "Fast typing is useful, but accurate typing is even more valuable. Try to build a balance between speed and precision as your skills develop.",
+
+    "The more familiar you become with common letter combinations, the less you need to think about individual keys. This makes typing smoother and more natural.",
+
+    "Practice typing different kinds of sentences to become a more flexible typist. Reading carefully and typing accurately can strengthen both speed and concentration.",
+
+    "A few minutes of focused practice each day can gradually build strong typing skills. Stay patient and remember that improvement comes from consistent effort.",
+
+    "Typing with confidence means trusting your fingers and staying focused on the text. If you make a mistake, correct it calmly and continue with the passage.",
+
+    "Good posture and relaxed hands can help reduce tiredness during long typing sessions. Comfort is important when you want to practice for longer periods.",
+
+    "Everyone improves at a different pace when learning to type. Compare your current results with your own previous results and celebrate small improvements.",
+
+    "Typing practice is more effective when you pay attention to your mistakes. Identify the keys or words that cause problems and practice them repeatedly.",
+
+    "A steady rhythm can make typing feel easier and more predictable. Try to avoid sudden bursts of speed followed by long pauses.",
+
+    "Modern computers make it possible to learn, communicate, and create from almost anywhere. Efficient typing helps you make better use of these powerful tools.",
+
+    "The goal of typing practice is not simply to achieve the highest score. It is to develop a reliable skill that becomes useful in everyday computer work.",
+
+    "With patience and regular practice, the keyboard can become an extension of your thoughts. You will spend less time searching for keys and more time expressing ideas.",
+
+    "Every practice session gives you another opportunity to improve. Stay focused, keep your hands relaxed, and aim for steady progress rather than perfection."
+
+];
+
+
+/* =========================================================
+   DIFFICULTY SETTINGS
+========================================================= */
+
+const difficultySettings = {
+
+    easy: {
+        time: 90,
+        minWords: 25,
+        label: "Easy"
+    },
+
+    medium: {
+        time: 60,
+        minWords: 30,
+        label: "Medium"
+    },
+
+    hard: {
+        time: 45,
+        minWords: 40,
+        label: "Hard"
+    }
+
+};
+
+
+/* =========================================================
+   DOM ELEMENTS
+========================================================= */
+
+const passage =
+    document.getElementById("passage");
+
+const input =
+    document.getElementById("input");
+
+const startButton =
+    document.getElementById("start");
+
+const raceAgainButton =
+    document.getElementById("raceAgain");
+
+const difficultySelect =
+    document.getElementById("difficulty");
+
+const result =
+    document.getElementById("result");
+
+const resultTitle =
+    document.getElementById("resultTitle");
+
+const resultText =
+    document.getElementById("resultText");
+
+const wpmElement =
+    document.getElementById("wpm");
+
+const accuracyElement =
+    document.getElementById("accuracy");
+
+const timeElement =
+    document.getElementById("time");
+
+const progressElement =
+    document.getElementById("progress");
+
+
+/* =========================================================
+   GAME VARIABLES
+========================================================= */
+
+let text = "";
+
+let started = false;
+
+let seconds = 60;
+
+let timer = null;
+
+let startTime = 0;
+
+let currentCorrect = 0;
+
+let currentAccuracy = 100;
+
+
+/* =========================================================
+   SAFE RANDOM PASSAGE
+========================================================= */
+
+function getRandomPassage() {
+
+    if (
+        !Array.isArray(passages) ||
+        passages.length === 0
+    ) {
+        return "Typing practice helps improve speed and accuracy.";
+    }
+
+    const index =
+        Math.floor(
+            Math.random() * passages.length
+        );
+
+    return passages[index];
+
+}
+
+
+/* =========================================================
+   GET DIFFICULTY
+========================================================= */
+
+function getDifficulty() {
+
+    const selected =
+        difficultySelect.value;
+
+    return (
+        difficultySettings[selected] ||
+        difficultySettings.medium
+    );
+
+}
+
+
+/* =========================================================
+   BUILD PASSAGE SAFELY
+========================================================= */
+
+/*
+ * The passage is converted into individual
+ * span elements.
+ *
+ * No user input is inserted into innerHTML.
+ */
+
+function renderPassage() {
+
+    passage.textContent = "";
+
+    const fragment =
+        document.createDocumentFragment();
+
+    for (
+        let i = 0;
+        i < text.length;
+        i++
+    ) {
+
+        const span =
+            document.createElement("span");
+
+        span.className =
+            "typing-character";
+
+        span.textContent =
+            text[i];
+
+        fragment.appendChild(
+            span
+        );
+
+    }
+
+    passage.appendChild(
+        fragment
+    );
+
+}
+
+
+/* =========================================================
+   UPDATE PASSAGE COLORS
+========================================================= */
+
+function updatePassageColors() {
+
+    const typed =
+        input.value;
+
+    const characters =
+        passage.querySelectorAll(
+            ".typing-character"
+        );
+
+
+    let correct = 0;
+
+    for (
+        let i = 0;
+        i < characters.length;
+        i++
+    ) {
+
+        const character =
+            characters[i];
+
+
+        character.classList.remove(
+            "correct",
+            "incorrect",
+            "current"
+        );
+
+
+        if (
+            i < typed.length
+        ) {
+
+            if (
+                typed[i] ===
+                text[i]
+            ) {
+
+                character.classList.add(
+                    "correct"
+                );
+
+                correct++;
+
+            } else {
+
+                character.classList.add(
+                    "incorrect"
+                );
+
+            }
+
+        }
+
+
+        /*
+         * Show the next character
+         * as the current typing position.
+         */
+
+        if (
+            i === typed.length &&
+            started
+        ) {
+
+            character.classList.add(
+                "current"
+            );
+
+        }
+
+    }
+
+    currentCorrect =
+        correct;
+
+}
+
+
+/* =========================================================
+   CALCULATE STATS
+========================================================= */
+
+function updateStats() {
+
+    const typed =
+        input.value;
+
+    const typedLength =
+        typed.length;
+
+
+    let correct = 0;
+
+    for (
+        let i = 0;
+        i < typed.length;
+        i++
+    ) {
+
+        if (
+            typed[i] ===
+            text[i]
+        ) {
+
+            correct++;
+
+        }
+
+    }
+
+
+    currentCorrect =
+        correct;
+
+
+    currentAccuracy =
+        typedLength > 0
+            ? Math.round(
+                (correct / typedLength) * 100
+              )
+            : 100;
+
+
+    const elapsed =
+        started
+            ? Math.max(
+                1,
+                (Date.now() - startTime) / 1000
+              )
+            : 1;
+
+
+    const wpm =
+        Math.round(
+            (correct / 5) /
+            (elapsed / 60)
+        );
+
+
+    const progress =
+        text.length > 0
+            ? Math.min(
+                100,
+                Math.round(
+                    (typedLength / text.length) * 100
+                )
+              )
+            : 0;
+
+
+    wpmElement.textContent =
+        Number.isFinite(wpm)
+            ? wpm
+            : 0;
+
+
+    accuracyElement.textContent =
+        currentAccuracy + "%";
+
+
+    progressElement.textContent =
+        progress + "%";
+
+
+    updatePassageColors();
+
+
+    /*
+     * Race is complete only when
+     * the entire passage has been typed.
+     */
+
+    if (
+        typedLength >= text.length &&
+        text.length > 0
+    ) {
+
+        finishRace(
+            wpm,
+            currentAccuracy,
+            true
+        );
+
+    }
+
+}
+
+
+/* =========================================================
+   START RACE
+========================================================= */
+
+function startRace() {
+
+    if (started) {
+        return;
+    }
+
+
+    clearInterval(timer);
+
+
+    const settings =
+        getDifficulty();
+
+
+    text =
+        getRandomPassage();
+
+
+    /*
+     * Difficulty can influence the
+     * amount of text presented.
+     */
+
+    if (
+        settings.minWords > 0
+    ) {
+
+        const wordCount =
+            text.trim().split(/\s+/).length;
+
+        /*
+         * The existing passages are already
+         * appropriate for the selected level.
+         * No unsafe string manipulation is needed.
+         */
+
+        void wordCount;
+
+    }
+
+
+    seconds =
+        settings.time;
+
+
+    started =
+        true;
+
+
+    currentCorrect =
+        0;
+
+
+    currentAccuracy =
+        100;
+
+
+    startTime =
+        Date.now();
+
+
+    renderPassage();
+
+
+    input.disabled =
+        false;
+
+
+    input.value =
+        "";
+
+
+    difficultySelect.disabled =
+        true;
+
+
+    startButton.disabled =
+        true;
+
+
+    startButton.textContent =
+        "🏎️ Racing...";
+
+
+    result.classList.remove(
+        "show"
+    );
+
+
+    timeElement.textContent =
+        seconds;
+
+
+    wpmElement.textContent =
+        "0";
+
+
+    accuracyElement.textContent =
+        "100%";
+
+
+    progressElement.textContent =
+        "0%";
+
+
+    updatePassageColors();
+
+
+    input.focus();
+
+
+    timer =
+        setInterval(
+            function () {
+
+                if (!started) {
+                    return;
+                }
+
+
+                seconds--;
+
+
+                timeElement.textContent =
+                    Math.max(
+                        0,
+                        seconds
+                    );
+
+
+                updateStats();
+
+
+                if (
+                    seconds <= 0
+                ) {
+
+                    const finalWpm =
+                        Number(
+                            wpmElement.textContent
+                        ) || 0;
+
+
+                    finishRace(
+                        finalWpm,
+                        currentAccuracy,
+                        false
+                    );
+
+                }
+
+            },
+            1000
+        );
+
+}
+
+
+/* =========================================================
+   FINISH RACE
+========================================================= */
+
+function finishRace(
+    wpm,
+    accuracy,
+    completed
+) {
+
+    if (!started) {
+        return;
+    }
+
+
+    started =
+        false;
+
+
+    clearInterval(timer);
+
+    timer =
+        null;
+
+
+    input.disabled =
+        true;
+
+
+    difficultySelect.disabled =
+        false;
+
+
+    startButton.disabled =
+        false;
+
+
+    startButton.textContent =
+        "🏁 Start Race";
+
+
+    /*
+     * Remove current-position indicator.
+     */
+
+    passage
+        .querySelectorAll(
+            ".current"
+        )
+        .forEach(
+            element => {
+
+                element.classList.remove(
+                    "current"
+                );
+
+            }
+        );
+
+
+    const safeWpm =
+        Number.isFinite(
+            Number(wpm)
+        )
+            ? Math.max(
+                0,
+                Math.round(Number(wpm))
+              )
+            : 0;
+
+
+    const safeAccuracy =
+        Number.isFinite(
+            Number(accuracy)
+        )
+            ? Math.max(
+                0,
+                Math.min(
+                    100,
+                    Math.round(Number(accuracy))
+                )
+              )
+            : 0;
+
+
+    if (completed) {
+
+        resultTitle.textContent =
+            "🏁 Race Finished!";
+
+        resultText.textContent =
+            `Excellent! You completed the passage at ${safeWpm} WPM with ${safeAccuracy}% accuracy.`;
+
+    } else {
+
+        resultTitle.textContent =
+            "⏰ Time's Up!";
+
+        resultText.textContent =
+            `You reached ${progressElement.textContent} progress at ${safeWpm} WPM with ${safeAccuracy}% accuracy.`;
+
+    }
+
+
+    /*
+     * Center popup.
+     */
+
+    result.classList.add(
+        "show"
+    );
+
+
+    raceAgainButton.focus();
+
+}
+
+
+/* =========================================================
+   INPUT HANDLER
+========================================================= */
+
+input.addEventListener(
+    "input",
+    function () {
+
+        if (!started) {
+            return;
+        }
+
+
+        /*
+         * Limit input to the passage length.
+         */
+
+        if (
+            input.value.length >
+            text.length
+        ) {
+
+            input.value =
+                input.value.substring(
+                    0,
+                    text.length
+                );
+
+        }
+
+
+        updateStats();
+
+    }
+);
+
+
+/* =========================================================
+   PREVENT ENTER SUBMISSION
+========================================================= */
+
+input.addEventListener(
+    "keydown",
+    function (event) {
+
+        if (
+            event.key === "Enter"
+        ) {
+
+            event.preventDefault();
+
+        }
+
+    }
+);
+
+
+/* =========================================================
+   START BUTTON
+========================================================= */
+
+startButton.addEventListener(
+    "click",
+    startRace
+);
+
+
+/* =========================================================
+   PLAY AGAIN
+========================================================= */
+
+raceAgainButton.addEventListener(
+    "click",
+    function () {
+
+        result.classList.remove(
+            "show"
+        );
+
+        startRace();
+
+    }
+);
+
+
+/* =========================================================
+   DIFFICULTY CHANGE
+========================================================= */
+
+difficultySelect.addEventListener(
+    "change",
+    function () {
+
+        if (started) {
+            return;
+        }
+
+
+        const settings =
+            getDifficulty();
+
+
+        seconds =
+            settings.time;
+
+
+        timeElement.textContent =
+            seconds;
+
+
+        wpmElement.textContent =
+            "0";
+
+
+        accuracyElement.textContent =
+            "100%";
+
+
+        progressElement.textContent =
+            "0%";
+
+    }
+);
+
+
+/* =========================================================
+   ESCAPE KEY
+   Close result popup only.
+========================================================= */
+
+document.addEventListener(
+    "keydown",
+    function (event) {
+
+        if (
+            event.key === "Escape" &&
+            result.classList.contains("show")
+        ) {
+
+            result.classList.remove(
+                "show"
+            );
+
+
+            raceAgainButton.blur();
+
+        }
+
+    }
+);
+
+
+/* =========================================================
+   INITIAL STATE
+========================================================= */
+
+(function initialize() {
+
+    clearInterval(timer);
+
+
+    started =
+        false;
+
+
+    input.disabled =
+        true;
+
+
+    difficultySelect.disabled =
+        false;
+
+
+    result.classList.remove(
+        "show"
+    );
+
+
+    startButton.disabled =
+        false;
+
+
+    startButton.textContent =
+        "🏁 Start Race";
+
+
+    const settings =
+        getDifficulty();
+
+
+    seconds =
+        settings.time;
+
+
+    timeElement.textContent =
+        seconds;
+
+
+    wpmElement.textContent =
+        "0";
+
+
+    accuracyElement.textContent =
+        "100%";
+
+
+    progressElement.textContent =
+        "0%";
+
+
+    passage.textContent =
+        "Click Start Race to begin.";
+
+})();
+</script>
+
+
+<!-- =========================================================
+     GAME-ONLY STYLES
+     Uses existing theme variables where available.
+========================================================= -->
+
+<style>
+
+/* Passage container */
+
+.type-racer-passage {
+    font-size: 22px;
+    line-height: 2;
+    padding: 25px;
+    margin-bottom: 25px;
+
+    background:
+        var(--bg-secondary, #f3f4f6);
+
+    color:
+        var(--text-primary, #111827);
+
+    border:
+        1px solid
+        var(--border-color, rgba(128,128,128,.25));
+
+    border-radius: 15px;
+
+    min-height: 110px;
+
+    word-break: normal;
+    overflow-wrap: anywhere;
+
+    transition:
+        background .2s ease,
+        color .2s ease;
+}
+
+
+/* Individual characters */
+
+.typing-character {
+    display: inline;
+    white-space: pre-wrap;
+
+    color:
+        var(--text-primary, #111827);
+
+    border-radius: 3px;
+
+    transition:
+        color .08s ease,
+        background-color .08s ease;
+}
+
+
+/* Correct character */
+
+.typing-character.correct {
+    color: #15803d;
+
+    background:
+        rgba(34, 197, 94, .16);
+}
+
+
+/* Incorrect character */
+
+.typing-character.incorrect {
+    color: #dc2626;
+
+    background:
+        rgba(239, 68, 68, .18);
+
+    text-decoration:
+        underline;
+
+    text-decoration-thickness: 2px;
+}
+
+
+/* Current typing position */
+
+.typing-character.current {
+    border-left:
+        2px solid
+        #6366f1;
+
+    animation:
+        typingCaret .8s step-end infinite;
+}
+
+
+@keyframes typingCaret {
+
+    0%,
+    100% {
+        border-left-color: #6366f1;
+    }
+
+    50% {
+        border-left-color: transparent;
+    }
+
+}
+
+
+/* Center result overlay */
+
+.type-racer-overlay {
+
+    position: fixed;
+
+    inset: 0;
+
+    z-index: 9999;
+
+    display: none;
+
+    align-items: center;
+
+    justify-content: center;
+
+    padding: 20px;
+
+    background:
+        rgba(0, 0, 0, .55);
+
+    backdrop-filter:
+        blur(5px);
+}
+
+
+.type-racer-overlay.show {
+    display: flex;
+}
+
+
+/* Result box */
+
+.type-racer-result {
+
+    width: min(
+        460px,
+        100%
+    );
+
+    padding: 30px;
+
+    text-align: center;
+
+    border-radius: 20px;
+
+    background:
+        var(--bg-primary,
+        #ffffff);
+
+    color:
+        var(--text-primary,
+        #111827);
+
+    border:
+        1px solid
+        var(--border-color,
+        rgba(128,128,128,.25));
+
+    box-shadow:
+        0 20px 60px
+        rgba(0,0,0,.25);
+
+    animation:
+        raceResultIn .25s ease-out;
+}
+
+
+.type-racer-result h2 {
+    margin-top: 0;
+    margin-bottom: 12px;
+}
+
+
+.type-racer-result p {
+    margin-bottom: 24px;
+    line-height: 1.6;
+}
+
+
+@keyframes raceResultIn {
+
+    from {
+        opacity: 0;
+        transform:
+            translateY(15px)
+            scale(.96);
+    }
+
+    to {
+        opacity: 1;
+        transform:
+            translateY(0)
+            scale(1);
+    }
+
+}
+
+
+/* Dark mode fallback */
+
+@media (prefers-color-scheme: dark) {
+
+    .type-racer-passage {
+        background:
+            var(--bg-secondary, #1f2937);
+
+        color:
+            var(--text-primary, #f9fafb);
+    }
+
+    .typing-character {
+        color:
+            var(--text-primary, #f9fafb);
+    }
+
+    .type-racer-result {
+        background:
+            var(--bg-primary, #111827);
+
+        color:
+            var(--text-primary, #f9fafb);
+    }
+
+}
+
+
+/* Mobile */
+
+@media (max-width: 600px) {
+
+    .type-racer-passage {
+        font-size: 18px;
+        line-height: 1.8;
+        padding: 18px;
+    }
+
+}
+
+</style>
+
+</body>
+</html>

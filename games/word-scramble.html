@@ -1,0 +1,1223 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<meta
+    name="description"
+    content="Word Scramble typing game with easy, medium and hard difficulty levels."
+>
+
+<meta
+    name="referrer"
+    content="no-referrer"
+>
+
+<title>Word Scramble - Typing Master</title>
+
+<link rel="stylesheet" href="../css/style.css">
+
+</head>
+
+
+<body>
+
+
+<div id="app"></div>
+
+
+<main class="main-content">
+
+
+<div class="page-header">
+
+    <h1>🔤 Word Scramble</h1>
+
+    <p>
+        Unscramble the words as quickly as possible.
+    </p>
+
+</div>
+
+
+<div class="game-container">
+
+<div class="game-panel">
+
+
+<!-- =====================================================
+     DIFFICULTY
+===================================================== -->
+
+<div
+    class="difficulty-section"
+    style="
+        margin-bottom:25px;
+        padding:18px;
+        border-radius:15px;
+        background:var(--bg-secondary, #f3f4f6);
+    "
+>
+
+    <h3 style="
+        margin-top:0;
+        margin-bottom:12px;
+    ">
+        Choose Difficulty
+    </h3>
+
+
+    <select
+        id="difficultySelect"
+        class="difficulty-select"
+        aria-label="Choose difficulty"
+        style="
+            width:100%;
+            max-width:320px;
+            padding:12px 14px;
+            border:1px solid var(--border-color, #d1d5db);
+            border-radius:10px;
+            background:var(--bg-primary, #ffffff);
+            color:var(--text-primary, #111827);
+            font-size:16px;
+            cursor:pointer;
+        "
+    >
+
+        <option value="easy">
+            🟢 Easy
+        </option>
+
+        <option value="medium">
+            🟡 Medium
+        </option>
+
+        <option value="hard">
+            🔴 Hard
+        </option>
+
+    </select>
+
+
+    <p
+        id="difficultyInfo"
+        style="
+            margin:12px 0 0;
+            color:var(--text-secondary, #6b7280);
+            font-size:14px;
+            line-height:1.5;
+        "
+    >
+        Easy: Short and familiar words with lower points.
+    </p>
+
+</div>
+
+
+<!-- =====================================================
+     GAME STATS
+===================================================== -->
+
+<div class="game-top">
+
+    <div class="game-stat">
+
+        <small>Score</small>
+
+        <strong id="score">
+            0
+        </strong>
+
+    </div>
+
+
+    <div class="game-stat">
+
+        <small>Time</small>
+
+        <strong id="time">
+            60
+        </strong>
+
+    </div>
+
+
+    <div class="game-stat">
+
+        <small>Words</small>
+
+        <strong id="words">
+            0
+        </strong>
+
+    </div>
+
+
+    <div class="game-stat">
+
+        <small>Difficulty</small>
+
+        <strong id="difficultyDisplay">
+            Easy
+        </strong>
+
+    </div>
+
+</div>
+
+
+<!-- =====================================================
+     SCRAMBLED WORD
+===================================================== -->
+
+<div
+    class="game-word"
+    id="scrambled"
+    aria-live="polite"
+>
+
+    Click Start
+
+</div>
+
+
+<div
+    class="game-hint"
+    id="hint"
+>
+
+    Unscramble the word and type the correct answer.
+
+</div>
+
+
+<!-- =====================================================
+     INPUT
+===================================================== -->
+
+<input
+    id="input"
+    class="game-input"
+    type="text"
+    placeholder="Type the correct word..."
+    disabled
+    autocomplete="off"
+    autocapitalize="off"
+    spellcheck="false"
+    aria-label="Type the correct word"
+>
+
+
+<!-- =====================================================
+     BUTTONS
+===================================================== -->
+
+<div class="game-buttons">
+
+    <button
+        class="game-btn"
+        id="start"
+        type="button"
+    >
+        ▶️ Start Game
+    </button>
+
+
+    <a
+        href="../games.html"
+        class="game-btn secondary"
+    >
+        ← Back
+    </a>
+
+</div>
+
+
+<!-- =====================================================
+     RESULT
+===================================================== -->
+
+<div
+    id="result"
+    class="game-result"
+    aria-live="polite"
+>
+
+    <h2 id="resultTitle">
+        🎉 Game Over
+    </h2>
+
+
+    <p id="resultText"></p>
+
+
+    <button
+        class="game-btn"
+        id="again"
+        type="button"
+    >
+        🔄 Play Again
+    </button>
+
+</div>
+
+
+</div>
+
+</div>
+
+
+</main>
+
+
+<script src="../js/common.js"></script>
+<script src="../js/app.js"></script>
+<script src="../js/games.js"></script>
+
+
+<script>
+
+"use strict";
+
+
+/* =====================================================
+   WORD LISTS
+===================================================== */
+
+const wordLists = {
+
+    easy: [
+
+        "cat",
+        "dog",
+        "sun",
+        "book",
+        "tree",
+        "fish",
+        "milk",
+        "home",
+        "ball",
+        "star",
+        "rain",
+        "door",
+        "school",
+        "water",
+        "happy",
+        "green",
+        "house",
+        "mouse",
+        "apple",
+        "chair",
+        "table",
+        "phone",
+        "light",
+        "smile",
+        "cloud",
+        "plant",
+        "river",
+        "music",
+        "bread",
+        "paper"
+
+    ],
+
+
+    medium: [
+
+        "keyboard",
+        "computer",
+        "practice",
+        "typing",
+        "accuracy",
+        "rhythm",
+        "learning",
+        "challenge",
+        "progress",
+        "student",
+        "language",
+        "internet",
+        "creative",
+        "message",
+        "exercise",
+        "important",
+        "comfortable",
+        "technology",
+        "communication",
+        "concentration",
+        "improvement",
+        "performance",
+        "experience",
+        "successful",
+        "efficient",
+        "development",
+        "attention",
+        "confidence",
+        "consistent"
+
+    ],
+
+
+    hard: [
+
+        "coordination",
+        "concentration",
+        "productivity",
+        "communication",
+        "determination",
+        "responsibility",
+        "extraordinary",
+        "professional",
+        "transformation",
+        "organization",
+        "characteristic",
+        "understanding",
+        "environment",
+        "opportunity",
+        "achievement",
+        "independent",
+        "information",
+        "imagination",
+        "relationship",
+        "development",
+        "accessibility",
+        "intelligence",
+        "performance",
+        "conversation",
+        "application",
+        "technological",
+        "creativity",
+        "comfortable",
+        "efficiently",
+        "experience"
+
+    ]
+
+};
+
+
+/* =====================================================
+   DIFFICULTY SETTINGS
+===================================================== */
+
+const difficultySettings = {
+
+    easy: {
+
+        time: 60,
+
+        points: 10,
+
+        label: "Easy",
+
+        description:
+            "Easy: Short and familiar words with lower points."
+
+    },
+
+
+    medium: {
+
+        time: 60,
+
+        points: 20,
+
+        label: "Medium",
+
+        description:
+            "Medium: Longer words with moderate difficulty and higher points."
+
+    },
+
+
+    hard: {
+
+        time: 60,
+
+        points: 35,
+
+        label: "Hard",
+
+        description:
+            "Hard: Long and challenging words with the highest points."
+
+    }
+
+};
+
+
+/* =====================================================
+   GAME VARIABLES
+===================================================== */
+
+let difficulty = "easy";
+
+let original = "";
+
+let score = 0;
+
+let words = 0;
+
+let time = 60;
+
+let timer = null;
+
+let playing = false;
+
+
+/*
+ * Keep track of used words during the
+ * current game to reduce repetition.
+ */
+let usedWords = new Set();
+
+
+/* =====================================================
+   ELEMENTS
+===================================================== */
+
+const scrambled =
+    document.getElementById("scrambled");
+
+const input =
+    document.getElementById("input");
+
+const startButton =
+    document.getElementById("start");
+
+const againButton =
+    document.getElementById("again");
+
+const result =
+    document.getElementById("result");
+
+const difficultySelect =
+    document.getElementById("difficultySelect");
+
+const difficultyDisplay =
+    document.getElementById("difficultyDisplay");
+
+const difficultyInfo =
+    document.getElementById("difficultyInfo");
+
+const scoreDisplay =
+    document.getElementById("score");
+
+const timeDisplay =
+    document.getElementById("time");
+
+const wordsDisplay =
+    document.getElementById("words");
+
+
+/* =====================================================
+   GET RANDOM WORD
+===================================================== */
+
+function getRandomWord() {
+
+    const list =
+        wordLists[difficulty];
+
+
+    /*
+     * Defensive fallback.
+     * This prevents the game from breaking if
+     * the selected difficulty somehow becomes invalid.
+     */
+
+    if (
+        !Array.isArray(list) ||
+        list.length === 0
+    ) {
+
+        return "game";
+
+    }
+
+
+    /*
+     * If all words have been used,
+     * start another cycle.
+     */
+
+    if (
+        usedWords.size >= list.length
+    ) {
+
+        usedWords.clear();
+
+    }
+
+
+    let selected = "";
+
+
+    /*
+     * Select an unused word.
+     */
+
+    do {
+
+        selected =
+            list[
+                Math.floor(
+                    Math.random() * list.length
+                )
+            ];
+
+    }
+    while (
+        usedWords.has(selected) &&
+        usedWords.size < list.length
+    );
+
+
+    usedWords.add(selected);
+
+
+    return selected;
+
+}
+
+
+/* =====================================================
+   SCRAMBLE WORD
+===================================================== */
+
+function scramble(word) {
+
+    /*
+     * A one-character word cannot
+     * meaningfully be scrambled.
+     */
+
+    if (
+        typeof word !== "string" ||
+        word.length < 2
+    ) {
+
+        return word;
+
+    }
+
+
+    const characters =
+        word.split("");
+
+
+    let shuffled = [];
+
+    let attempts = 0;
+
+
+    /*
+     * Fisher-Yates shuffle.
+     *
+     * Repeat until the scrambled word
+     * differs from the original.
+     */
+
+    do {
+
+        shuffled =
+            [...characters];
+
+
+        for (
+            let i = shuffled.length - 1;
+            i > 0;
+            i--
+        ) {
+
+            const j =
+                Math.floor(
+                    Math.random() * (i + 1)
+                );
+
+
+            [
+                shuffled[i],
+                shuffled[j]
+            ] =
+            [
+                shuffled[j],
+                shuffled[i]
+            ];
+
+        }
+
+
+        attempts++;
+
+    }
+    while (
+        shuffled.join("") === word &&
+        attempts < 20
+    );
+
+
+    /*
+     * Fallback for very short words or
+     * extremely unlucky random results.
+     */
+
+    if (
+        shuffled.join("") === word &&
+        word.length > 2
+    ) {
+
+        shuffled =
+            characters
+                .slice(1)
+                .concat(characters[0]);
+
+    }
+
+
+    return shuffled.join("");
+
+}
+
+
+/* =====================================================
+   NEXT WORD
+===================================================== */
+
+function nextWord() {
+
+    if (!playing) {
+
+        return;
+
+    }
+
+
+    original =
+        getRandomWord();
+
+
+    const mixed =
+        scramble(original);
+
+
+    /*
+     * textContent is deliberately used instead
+     * of innerHTML for safe DOM updates.
+     */
+
+    scrambled.textContent =
+        mixed;
+
+
+    input.value = "";
+
+    input.focus();
+
+}
+
+
+/* =====================================================
+   UPDATE STATS
+===================================================== */
+
+function update() {
+
+    scoreDisplay.textContent =
+        String(score);
+
+
+    timeDisplay.textContent =
+        String(time);
+
+
+    wordsDisplay.textContent =
+        String(words);
+
+
+    const settings =
+        difficultySettings[difficulty];
+
+
+    difficultyDisplay.textContent =
+        settings.label;
+
+}
+
+
+/* =====================================================
+   START GAME
+===================================================== */
+
+function startGame() {
+
+    /*
+     * Prevent accidental duplicate starts.
+     */
+
+    if (playing) {
+
+        return;
+
+    }
+
+
+    /*
+     * Clear any previous timer.
+     */
+
+    if (timer !== null) {
+
+        clearInterval(timer);
+
+        timer = null;
+
+    }
+
+
+    const settings =
+        difficultySettings[difficulty];
+
+
+    /*
+     * Reset game.
+     */
+
+    score = 0;
+
+    words = 0;
+
+    time = settings.time;
+
+    original = "";
+
+    usedWords.clear();
+
+    playing = true;
+
+
+    /*
+     * Enable input.
+     */
+
+    input.disabled = false;
+
+    input.value = "";
+
+
+    /*
+     * Hide previous result.
+     */
+
+    result.classList.remove("show");
+
+
+    /*
+     * Lock difficulty during gameplay.
+     */
+
+    difficultySelect.disabled = true;
+
+
+    /*
+     * Disable Start button.
+     */
+
+    startButton.disabled = true;
+
+    startButton.textContent =
+        "🎮 Playing...";
+
+
+    /*
+     * Display first word.
+     */
+
+    nextWord();
+
+
+    update();
+
+
+    /*
+     * Start countdown.
+     */
+
+    timer =
+        setInterval(
+            function () {
+
+                if (!playing) {
+
+                    return;
+
+                }
+
+
+                time--;
+
+
+                update();
+
+
+                if (time <= 0) {
+
+                    endGame();
+
+                }
+
+            },
+            1000
+        );
+
+}
+
+
+/* =====================================================
+   END GAME
+===================================================== */
+
+function endGame() {
+
+    /*
+     * Prevent duplicate execution.
+     */
+
+    if (!playing) {
+
+        return;
+
+    }
+
+
+    playing = false;
+
+
+    /*
+     * Always stop the timer.
+     */
+
+    if (timer !== null) {
+
+        clearInterval(timer);
+
+        timer = null;
+
+    }
+
+
+    /*
+     * Disable answer input.
+     */
+
+    input.disabled = true;
+
+
+    /*
+     * Restore controls.
+     */
+
+    startButton.disabled = false;
+
+    startButton.textContent =
+        "▶️ Start Game";
+
+
+    difficultySelect.disabled =
+        false;
+
+
+    /*
+     * Clear the active answer so
+     * it cannot be submitted after
+     * the game ends.
+     */
+
+    original = "";
+
+
+    scrambled.textContent =
+        "Finished!";
+
+
+    /*
+     * Show final result.
+     *
+     * No history is saved.
+     */
+
+    result.classList.add("show");
+
+
+    result.querySelector("#resultTitle")
+        .textContent =
+        "🎉 Game Over";
+
+
+    result.querySelector("#resultText")
+        .textContent =
+        `You scored ${score} points and solved ${words} words on ${difficultySettings[difficulty].label} difficulty.`;
+
+}
+
+
+/* =====================================================
+   CHECK ANSWER
+===================================================== */
+
+input.addEventListener(
+    "input",
+    function () {
+
+        if (!playing) {
+
+            return;
+
+        }
+
+
+        /*
+         * Limit processing to normal text input.
+         * trim() makes accidental surrounding
+         * spaces harmless.
+         */
+
+        const answer =
+            input.value
+                .trim()
+                .toLowerCase();
+
+
+        /*
+         * Do nothing for an incomplete answer.
+         */
+
+        if (!answer) {
+
+            return;
+
+        }
+
+
+        /*
+         * Exact case-insensitive comparison.
+         */
+
+        if (
+            answer ===
+            original.toLowerCase()
+        ) {
+
+            const settings =
+                difficultySettings[difficulty];
+
+
+            score +=
+                settings.points;
+
+
+            words++;
+
+
+            update();
+
+
+            nextWord();
+
+        }
+
+    }
+);
+
+
+/* =====================================================
+   DIFFICULTY SELECTION
+===================================================== */
+
+difficultySelect.addEventListener(
+    "change",
+    function () {
+
+        /*
+         * Difficulty cannot be changed
+         * during an active game.
+         */
+
+        if (playing) {
+
+            return;
+
+        }
+
+
+        const selected =
+            difficultySelect.value;
+
+
+        /*
+         * Validate against the known
+         * difficulty settings.
+         */
+
+        if (
+            !Object.prototype.hasOwnProperty.call(
+                difficultySettings,
+                selected
+            )
+        ) {
+
+            difficulty =
+                "easy";
+
+            difficultySelect.value =
+                "easy";
+
+        }
+
+        else {
+
+            difficulty =
+                selected;
+
+        }
+
+
+        const settings =
+            difficultySettings[difficulty];
+
+
+        difficultyInfo.textContent =
+            settings.description;
+
+
+        difficultyDisplay.textContent =
+            settings.label;
+
+
+        time =
+            settings.time;
+
+
+        update();
+
+    }
+);
+
+
+/* =====================================================
+   START BUTTON
+===================================================== */
+
+startButton.addEventListener(
+    "click",
+    startGame
+);
+
+
+/* =====================================================
+   PLAY AGAIN
+===================================================== */
+
+againButton.addEventListener(
+    "click",
+    function () {
+
+        /*
+         * Start a completely fresh game.
+         */
+
+        startGame();
+
+    }
+);
+
+
+/* =====================================================
+   ENTER KEY
+===================================================== */
+
+document.addEventListener(
+    "keydown",
+    function (event) {
+
+        /*
+         * Allow Enter to start the game when
+         * the answer field is not focused.
+         */
+
+        if (
+            event.key === "Enter" &&
+            !playing &&
+            document.activeElement !== input
+        ) {
+
+            startGame();
+
+        }
+
+    }
+);
+
+
+/* =====================================================
+   INITIAL STATE
+===================================================== */
+
+(function initializeGame() {
+
+    playing = false;
+
+    difficulty = "easy";
+
+    difficultySelect.value =
+        "easy";
+
+    input.disabled = true;
+
+    difficultySelect.disabled =
+        false;
+
+    startButton.disabled =
+        false;
+
+    startButton.textContent =
+        "▶️ Start Game";
+
+
+    const settings =
+        difficultySettings.easy;
+
+
+    time =
+        settings.time;
+
+
+    difficultyInfo.textContent =
+        settings.description;
+
+
+    difficultyDisplay.textContent =
+        settings.label;
+
+
+    score = 0;
+
+    words = 0;
+
+
+    update();
+
+
+    scrambled.textContent =
+        "Click Start Game";
+
+})();
+
+</script>
+
+
+</body>
+
+</html>
